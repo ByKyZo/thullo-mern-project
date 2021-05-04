@@ -1,0 +1,19 @@
+@mixin display(
+    $display: flex,
+    $direction: unset,
+    $justify_content: unset,
+    $align_items: unset
+) {
+    display: $display;
+    flex-direction: $direction;
+    justify-content: $justify_content;
+    align-items: $align_items;
+}
+
+@mixin focus($color) {
+    transition: box-shadow 0.2s;
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 1.5px $color;
+    }
+}
