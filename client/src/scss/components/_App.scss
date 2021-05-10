@@ -1,0 +1,20 @@
+.app {
+    background-color: $neutralMidlLight;
+    min-height: 100vh;
+    overflow-y: hidden;
+}
+
+@import './pages/AllBoards';
+@import './pages/Auth';
+@import './pages/Board';
+
+@import './templates/Header';
+@import './templates/PageLoader';
+@import './templates/dropdown/InviteMember';
+@import './templates/modal/ProfilMenu';
+@import './templates/modal/CreateBoard';
+
+@import './utils/Loader';
+@import './utils/DropDown';
+@import './utils/Toast';
+@import './utils/Modal';

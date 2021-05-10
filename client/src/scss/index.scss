@@ -1,6 +1,7 @@
-@import './reset';
-@import './variables';
-@import './mixins.scss';
-@import './functions.scss';
+@import './utils/reset';
+@import './utils/variables';
+@import './utils/mixins.scss';
+@import './utils/functions.scss';
+@import './utils/animations';
 
-@import './components/Auth/Auth';
+@import './components/App';

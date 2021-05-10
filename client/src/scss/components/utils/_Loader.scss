@@ -1,0 +1,25 @@
+.loaderStyle {
+    fill: none;
+    // stroke: $primary;
+    stroke-dasharray: 100%;
+    position: absolute;
+}
+
+.loader {
+    position: absolute;
+    pointer-events: none;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    &__around {
+        @extend .loaderStyle;
+        transform-origin: center;
+        animation: loader 1s linear infinite;
+    }
+    &__inset {
+        @extend .loaderStyle;
+        transform: translate(10%, 10%);
+        transform-origin: 40% 40%;
+        animation: loaderInset 0.5s linear infinite;
+    }
+}

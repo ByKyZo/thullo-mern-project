@@ -1,8 +1,8 @@
 /**
  * FOR LOCAL
  */
-export default API_URL = 'http://localhost:5000';
-export default SOCKET_URL = 'http://localhost:5000';
+export const API_URL = 'http://localhost:5000';
+export const SOCKET_URL = 'http://localhost:5000';
 
 /**
  * FOR HEROKU

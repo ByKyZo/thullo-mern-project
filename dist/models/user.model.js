@@ -18,13 +18,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const UserSchema = new mongoose_1.Schema({
     pseudo: {
         type: String,
         min: 4,
-        required: true
+        required: true,
     },
     email: {
         type: String,
@@ -34,6 +38,38 @@ const UserSchema = new mongoose_1.Schema({
     password: {
         type: String,
         required: true,
-    }
+    },
+    boards: {
+        type: [String],
+    },
+    picture: {
+        type: String,
+        default: 'defaultUserPicture.png',
+    },
+    notifications: [
+        {
+            title: {
+                type: String,
+                required: true,
+            },
+            message: {
+                type: String,
+            },
+            content: {
+                type: String,
+            },
+        },
+    ],
+});
+UserSchema.pre('save', function (next) {
+    if (!this.picture)
+        this.picture = 'defaultUserPicture.png';
+    const salt = 10;
+    bcrypt_1.default.hash(this.password, salt, (err, hash) => {
+        if (err)
+            return console.log('password hash error : ' + err.message);
+        this.password = hash;
+        next();
+    });
 });
 exports.default = mongoose_1.default.model('users', UserSchema);

@@ -1,0 +1,48 @@
+@keyframes logoBar {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes logoLabel {
+    0% {
+        opacity: 0.4;
+        transform: translateX(-20%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0%);
+    }
+}
+
+@keyframes boardPop {
+    0% {
+        opacity: 0.4;
+        transform: translateY(-10%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}
+
+@keyframes loader {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes loaderInset {
+    0% {
+        transform: translate(10%, 10%) rotate(150deg);
+    }
+    100% {
+        transform: translate(10%, 10%) rotate(510deg);
+    }
+}

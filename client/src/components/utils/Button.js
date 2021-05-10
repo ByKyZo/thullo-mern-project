@@ -4,11 +4,11 @@ const button = {
     cursor: 'pointer',
 };
 
-const Button = ({ children, type, onClick, className }) => {
+const Button = ({ children, type, onClick, className, style }) => {
     return (
         <button
             type={type}
-            style={button}
+            style={{ ...button, ...style }}
             className={`${className}`}
             onClick={onClick}>
             {children}

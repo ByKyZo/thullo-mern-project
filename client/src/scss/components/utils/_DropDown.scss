@@ -1,0 +1,33 @@
+.dropdown {
+    position: absolute;
+    overflow: hidden;
+    z-index: 9999;
+    padding: 8px;
+    &-responsive {
+        position: fixed;
+        left: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+.dropdown-enter-done {
+    transform: translateY(0%);
+    transition: transform 300ms;
+}
+.dropdown-enter {
+    transform: translateY(-100%);
+    transition: transform 300ms;
+}
+.dropdown-enter-active {
+    transform: translateY(0%);
+    transition: transform 300ms;
+}
+.dropdown-exit-done {
+    transform: translateY(-100%);
+    transition: transform 300ms;
+}
+.dropdown-exit-active {
+    transform: translateY(-100%);
+    transition: transform 300ms;
+}

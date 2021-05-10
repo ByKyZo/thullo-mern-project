@@ -1,0 +1,107 @@
+.invitemember {
+    @include modalPreset();
+    min-width: 245px;
+
+    &__title {
+        display: inline-block;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+        color: $neutralDark;
+    }
+    &__para {
+        font-size: 0.8rem;
+        margin-bottom: 16px;
+        color: $secondary;
+    }
+
+    &__input__wrapper {
+        @include radius('small');
+        height: 34px;
+        position: relative;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 16px;
+
+        &__input {
+            @include focus();
+            @include radius('small');
+            padding-left: 10px;
+            padding-right: 40px;
+            height: 100%;
+            width: 100%;
+            border: none;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+            color: $neutralDark;
+
+            &::placeholder {
+                opacity: 0.6;
+                font-size: 0.8rem;
+            }
+        }
+
+        &__btn {
+            @include button(0, 'basic');
+            height: 30px;
+            width: 30px;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+        }
+    }
+    &__suggest {
+        @include radius('small');
+        border: 1px solid $borderModal;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background-color: white;
+        padding: 10px;
+        list-style: none;
+        margin-bottom: 24px;
+
+        &__item {
+            @include radius('small');
+
+            @include display(flex, unset, start, center);
+            background-color: transparent;
+            padding: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+            &:hover {
+                background-color: $primaryLight;
+            }
+
+            &__picture {
+                @include radius('small');
+                background-color: $primary;
+                height: 32px;
+                width: 32px;
+                margin-right: 14px;
+            }
+            &__pseudo {
+                color: $neutralDark;
+                font-weight: 500;
+            }
+
+            &__icon {
+                color: $neutralDark;
+                margin-left: auto;
+                font-size: 1.3rem;
+                transition: 0.3s;
+                transform: scale(1);
+                &--select {
+                    color: green;
+                }
+            }
+        }
+    }
+    &__btn-invite {
+        @include button(0 24px, 'basic');
+        height: 30px;
+        margin: 0 auto;
+        font-size: 0.7rem;
+        &--disabled {
+            background-color: $neutralMidDark;
+        }
+    }
+}

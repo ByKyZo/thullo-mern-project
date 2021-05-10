@@ -1,0 +1,8 @@
+.profilmenu {
+    @include modalPreset();
+    &__navlist {
+        list-style: none;
+        line-height: 40px;
+        text-align: start;
+    }
+}

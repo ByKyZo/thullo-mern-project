@@ -1,0 +1,216 @@
+.header {
+    height: 68px;
+    background-color: $neutralLightest;
+    padding: 16px 26px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    @media (max-width: 650px) {
+        padding: 16px 0px;
+    }
+    @include display(flex, unset, space-between);
+
+    &__left {
+        @include display(flex, unset, unset, center);
+        height: 100%;
+
+        &__logo {
+            @include focus();
+            display: flex;
+            background-color: transparent;
+            cursor: pointer;
+            margin-right: 60px;
+            border-radius: 8px;
+            padding: 6px;
+            @media (max-width: 1100px) {
+                margin-right: 30px;
+            }
+            @media (max-width: 650px) {
+                margin-right: 6px;
+            }
+
+            &__label {
+                animation: 1.5s logoLabel forwards;
+            }
+
+            &__left {
+                transform: translateY(-100%);
+                animation: 1.5s 0.5s logoBar forwards;
+            }
+
+            &__right {
+                animation: logoBar 1.5s forwards;
+            }
+        }
+
+        &__board {
+            @include display(flex, unset, unset, center);
+            height: 100%;
+
+            &__name {
+                font-weight: 500;
+                color: $neutralDark;
+                font-size: 1.2rem;
+                letter-spacing: -1px;
+                @media (max-width: 650px) {
+                    font-size: 1rem;
+                }
+            }
+
+            &__divider {
+                display: inline-block;
+                width: 2px;
+                height: 30px;
+                background-color: $neutralLight;
+                margin: 0 24px;
+                @media (max-width: 650px) {
+                    display: none;
+                }
+            }
+
+            &__btn-allboard {
+                @include resetLink();
+                @include display(flex, unset, unset, center);
+                @include button('basic', 'basic', 'secondary');
+                font-size: 0.9rem;
+                @media (max-width: 650px) {
+                    padding: 0 12px;
+                    height: 100%;
+                    margin-left: 14px;
+                }
+
+                &__icons {
+                    font-size: 0.8rem;
+                }
+
+                &__label {
+                    margin-left: 10px;
+                    @media (max-width: 650px) {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+
+    &__right {
+        @include display(flex, unset, unset, center);
+
+        &__search {
+            position: relative;
+            width: 338px;
+            height: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-right: 20px;
+
+            &__input {
+                box-sizing: border-box;
+                padding-left: 10px;
+                border-radius: 10px;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border: none;
+                padding-right: 86px;
+                @include focus();
+                &::placeholder {
+                    font-size: 0.8rem;
+                    font-weight: 500;
+                    opacity: 0.6;
+                }
+            }
+
+            &__button {
+                @include button(0 16px, 'basic');
+                font-size: 0.7rem;
+                height: 32px;
+                position: absolute;
+                right: 2px;
+                top: 2px;
+            }
+
+            &__responsive {
+                position: relative;
+                height: 100%;
+
+                &__button {
+                    height: 100% !important;
+                    @include button(0 16px, 'basic');
+                    font-size: 0.7rem;
+                    height: 32px;
+                }
+
+                &__dropdown {
+                    &__wrapper {
+                        padding: 6px;
+
+                        &__input {
+                            @include focus();
+                            border: 1px solid $primaryLight;
+                            padding: 15px;
+                            border-radius: 10px;
+                            &::placeholder {
+                                font-size: 0.8rem;
+                                font-weight: 500;
+                                opacity: 0.6;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        &__profil {
+            margin-left: 15px;
+            height: 100%;
+            background-color: transparent;
+            padding: 6px;
+            border-radius: 8px;
+            box-sizing: unset;
+            cursor: pointer;
+            position: relative;
+            @include display(flex, unset, unset, center);
+            @include focus();
+            @media (max-width: 650px) {
+                margin-left: 6px;
+            }
+
+            &__img {
+                width: 36px;
+                height: 36px;
+                background-color: $primary;
+                border-radius: 8px;
+                margin-right: 10px;
+            }
+
+            &__name {
+                margin-right: 16px;
+                font-weight: 500;
+                font-size: 0.9rem;
+                @media (max-width: 700px) {
+                    display: none;
+                }
+            }
+
+            &__icon {
+                font-size: 0.7rem;
+            }
+
+            &__notifications {
+                display: inline-block;
+                @include display(flex, unset, center, center);
+                position: absolute;
+                height: 20px;
+                width: 20px;
+                background-color: $primary;
+                border-radius: 50%;
+                font-size: 0.7rem;
+                top: -2px;
+                left: -2px;
+                color: $neutralLightest;
+            }
+        }
+    }
+}

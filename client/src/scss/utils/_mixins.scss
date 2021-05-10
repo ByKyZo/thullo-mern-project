@@ -1,0 +1,128 @@
+@mixin display($display: flex, $direction: unset, $justify_content: unset, $align_items: unset) {
+    display: $display;
+    flex-direction: $direction;
+    justify-content: $justify_content;
+    align-items: $align_items;
+}
+
+@mixin focus($color: $primary) {
+    // desactive le focus a 650px
+    @media (min-width: 650px) {
+        transition: 0.3s;
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgb(241, 241, 241), 0 0 0 4px $color;
+        }
+    }
+}
+
+@mixin resetLink() {
+    text-decoration: none;
+    color: inherit;
+}
+
+@mixin popup($color) {
+    box-sizing: border-box;
+    color: $color;
+    border: 1px solid $color;
+    background-color: $neutralLightest;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 8px;
+    display: flex;
+    // justify-content: center;
+    align-items: center;
+    padding: 16px;
+}
+
+@mixin button($padding: 'basic', $rounded: 'basic', $type: 'primary') {
+    @include focus();
+    @include display(flex, unset, center, center);
+    cursor: pointer;
+    position: relative;
+    transition: 0.3s;
+    overflow: hidden;
+    z-index: 10;
+
+    @if ($type == 'primary') {
+        background-color: $primary;
+        color: $neutralLightest;
+        &::before {
+            content: '';
+            height: 100%;
+            width: 100%;
+            background-color: darken($primary, 20%);
+            opacity: 0.4;
+            position: absolute;
+            transform: translateX(-100%);
+            z-index: -1;
+            transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s;
+        }
+        &:hover {
+            &::before {
+                transform: translateX(0);
+            }
+        }
+    }
+    @if ($type == 'secondary') {
+        background-color: $neutralLight;
+        color: $secondary;
+        &::before {
+            content: '';
+            height: 100%;
+            width: 100%;
+            background-color: darken($neutralLight, 20%);
+            opacity: 0.4;
+            position: absolute;
+            transform: translateX(-100%);
+            z-index: -1;
+            transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s;
+        }
+        &:hover {
+            &::before {
+                transform: translateX(0);
+            }
+        }
+    }
+
+    @if ($rounded == 'basic') {
+        border-radius: 8px;
+    } @else {
+        border-radius: $rounded;
+    }
+    @if ($padding == 'basic') {
+        padding: 10px 14px;
+    } @else {
+        padding: $padding;
+    }
+}
+
+@mixin radius($type) {
+    @if ($type == 'tiny') {
+        border-radius: 4px;
+    }
+    @if ($type == 'small') {
+        border-radius: 8px;
+    }
+    @if ($type == 'medium') {
+        border-radius: 12px;
+    }
+    @if ($type == 'big') {
+        border-radius: 16px;
+    }
+}
+
+@mixin colorAjust($color) {
+    background-color: rgba($color, 0.2);
+    color: $color;
+}
+
+@mixin modalPreset() {
+    background-color: white;
+    @include radius('small');
+    padding: 10px;
+    border: 1px solid $borderModal;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+// FAIRE UNE MARGIN / PADDING PREDEFINI;
+@mixin margin() {
+}
