@@ -4,10 +4,13 @@ import { addToast, clearToastByTypes, errorsManager, setRememberMeCookie } from 
 import { loading, endLoading } from './loader.action';
 import { FiUserCheck } from 'react-icons/fi';
 import { getAllBoardByUserID } from './board.action';
+import { store } from '../store';
+import userReducer from '../reducer/user.reducer';
 
 export const LOGIN = 'LOGIN';
 export const REMEMBER_ME = 'REMEMBER_ME';
 export const ADD_NOTIFICATION = 'ADD_NOTIFICATION';
+export const DELETE_NOTIFICATION = 'DELETE_NOTIFICATION';
 
 export const login = (userLogin) => {
     return (dispatch) => {
@@ -56,5 +59,22 @@ export const addNotification = (notifications) => {
     return (dispatch) => {
         console.log(notifications);
         return dispatch({ type: ADD_NOTIFICATION, payload: notifications });
+    };
+};
+
+export const deleteNotification = (userID, notificationID) => {
+    return (dispatch) => {
+        const deleteNotifObject = {
+            userID,
+            notificationID,
+        };
+        return axios
+            .post(`/user/delete-notification`, deleteNotifObject)
+            .then((res) => {
+                return dispatch({ type: DELETE_NOTIFICATION, payload: notificationID });
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 };

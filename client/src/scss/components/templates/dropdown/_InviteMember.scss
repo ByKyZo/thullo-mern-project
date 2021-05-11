@@ -1,5 +1,4 @@
 .invitemember {
-    @include modalPreset();
     min-width: 245px;
 
     &__title {
@@ -61,7 +60,7 @@
         &__item {
             @include radius('small');
 
-            @include display(flex, unset, start, center);
+            @include display(flex, unset, flex-start, center);
             background-color: transparent;
             padding: 8px;
             cursor: pointer;

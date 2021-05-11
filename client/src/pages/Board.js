@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import PageTemplate from '../components/templates/PageTemplate';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBoard } from '../redux/actions/board.action';
+import { cleanCurrentBoard, getBoard } from '../redux/actions/board.action';
 import Button from '../components/utils/Button';
 import { HiDotsHorizontal } from 'react-icons/hi';
 import { MdLock, MdAdd } from 'react-icons/md';
@@ -19,6 +19,8 @@ const Board = (props) => {
 
     useEffect(() => {
         dispatch(getBoard(id));
+
+        return () => dispatch(cleanCurrentBoard());
     }, [dispatch, id]);
 
     // CUSTOM LA SCROLLBAR

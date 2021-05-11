@@ -102,6 +102,16 @@ export class UserController {
         const { userID, type, title, message } = req.body;
     }
 
+    public static async deleteNotification(req: Request, res: Response) {
+        const { userID, notificationID } = req.body;
+
+        const user = await UserModel.findByIdAndUpdate(userID, {
+            $pull: { notifications: { _id: notificationID } },
+        });
+
+        res.status(200).send(user);
+    }
+
     public static delete(req: Request, res: Response) {
         res.send('Hello from Delete');
     }

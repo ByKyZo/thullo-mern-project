@@ -35,7 +35,6 @@
 }
 
 @mixin button($padding: 'basic', $rounded: 'basic', $type: 'primary') {
-    @include focus();
     @include display(flex, unset, center, center);
     cursor: pointer;
     position: relative;
@@ -44,6 +43,7 @@
     z-index: 10;
 
     @if ($type == 'primary') {
+        @include focus($primary);
         background-color: $primary;
         color: $neutralLightest;
         &::before {
@@ -64,6 +64,7 @@
         }
     }
     @if ($type == 'secondary') {
+        @include focus($secondary);
         background-color: $neutralLight;
         color: $secondary;
         &::before {
@@ -71,6 +72,29 @@
             height: 100%;
             width: 100%;
             background-color: darken($neutralLight, 20%);
+            opacity: 0.4;
+            position: absolute;
+            transform: translateX(-100%);
+            z-index: -1;
+            transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s;
+        }
+        &:hover {
+            &::before {
+                transform: translateX(0);
+            }
+        }
+    }
+
+    @if ($type != 'primary' and $type != 'secondary') {
+        @include focus($type);
+
+        background-color: $type;
+        color: white;
+        &::before {
+            content: '';
+            height: 100%;
+            width: 100%;
+            background-color: darken($type, 20%);
             opacity: 0.4;
             position: absolute;
             transform: translateX(-100%);

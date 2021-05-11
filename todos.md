@@ -2,17 +2,18 @@
 
 -   FAIRE LE RESPONSIVE AU FUR EST A MESURE IMPORTANT
 
+-   Voir si on peut rejoindre un board autrement (plus propre ? pas sur ?) et petit bug sur l'ajout de l'icone membre 1/3 etc
+    Voir les erreurs serveur aussi.
 -   Faire des types de notifications (pour reutilisé et faire un affichage different selon le type)
     exemple (BOARD_INVITATION , INFORMATION , FRIEND_INVITATION etc...)
--   Faire le modal de notifications user
--   Pouvoir accepter ou refuser l'invitation au board
 -   Afficher page erreur (page stylé ?) si le user est sur la page d'un board alors qu'il est pas dedans
 
 -   Faire un lien pour rejoindre un board ? (BONUS)
--   afficher les board dans all boards (!!avec les users!!)
 -   Voir ce qu'on peut faire avec les user id du socket io
 
 ---
+
+-   FAIRE LES CHOSES PROPREMENT AVANT DE COMMENCER LES TABLEAUX
 
 ---
 

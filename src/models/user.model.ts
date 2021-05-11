@@ -26,6 +26,10 @@ const UserSchema: Schema = new Schema({
     },
     notifications: [
         {
+            type: {
+                type: String,
+                required: true,
+            },
             title: {
                 type: String,
                 required: true,
@@ -33,7 +37,13 @@ const UserSchema: Schema = new Schema({
             message: {
                 type: String,
             },
-            content: {
+            sender: {
+                type: String,
+            },
+            receiver: {
+                type: String,
+            },
+            boardIDRequested: {
                 type: String,
             },
         },

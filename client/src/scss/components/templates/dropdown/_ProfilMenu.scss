@@ -1,0 +1,95 @@
+.profilmenu {
+    max-width: 500px;
+
+    &__navlist {
+        list-style: none;
+        text-align: start;
+
+        &__item {
+            @include radius('small');
+            @include display(flex, unset, unset, center);
+            position: relative;
+            cursor: pointer;
+            color: $neutralDark;
+            background-color: transparent;
+            width: 100%;
+            transition: 0.3s;
+            padding: 0 10px;
+            line-height: 40px;
+
+            &__icon {
+                font-size: 1.2rem;
+                margin-right: 12px;
+                color: $primary;
+            }
+            &:hover {
+                background-color: $primaryLight;
+            }
+        }
+
+        &__divider {
+            height: 1px;
+            width: 100%;
+            background-color: $primaryLight;
+            margin: 8px 0;
+        }
+    }
+
+    &__notifications {
+        &__top {
+            font-size: 1.4rem;
+            @include display(flex, unset, center, center);
+            color: $neutralDark;
+            margin-bottom: 25px;
+            &__icon {
+                margin-right: 8px;
+            }
+        }
+        &__list {
+            list-style: none;
+            color: $neutralDark;
+
+            &__item {
+                @include display(flex, unset, space-between, center);
+                @include radius('small');
+                padding: 14px 10px;
+
+                &__right {
+                    @include display(flex, unset, flex-start, center);
+                    margin-right: 30px;
+
+                    &__content {
+                        @include display(flex, column, flex-start);
+                        text-align: start;
+                        &__title {
+                            font-weight: 500;
+                        }
+
+                        &__message {
+                            font-size: 0.7rem;
+                        }
+                    }
+
+                    &__icon {
+                        margin-right: 12px;
+                        font-size: 2rem;
+                        flex-shrink: 0;
+                    }
+                }
+                &__left {
+                    @include display(flex, unset, flex-start, center);
+
+                    &__btn-valid {
+                        @include button(8px, 'basic');
+                        margin-right: 10px;
+                    }
+                    &__btn-wrong {
+                        @include button(8px, 'basic', 'secondary');
+                    }
+                }
+
+                // background-color: $primary;
+            }
+        }
+    }
+}

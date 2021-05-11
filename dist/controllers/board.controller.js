@@ -81,13 +81,18 @@ class BoardController {
             }
         });
     }
-    static sendBoardInvitation(guestUserIDList, boardID) {
+    static sendBoardInvitation(senderPseudo, guestUserIDList, boardID, boardName) {
         return __awaiter(this, void 0, void 0, function* () {
             let invitations = [];
             for (let i = 0; i < guestUserIDList.length; i++) {
                 const invitation = yield user_model_1.default.findByIdAndUpdate(guestUserIDList[i], {
                     $addToSet: {
-                        notifications: { title: 'Board invitation', content: boardID },
+                        notifications: {
+                            type: 'BOARD_INVATION',
+                            title: 'Board Invitation',
+                            message: `${senderPseudo} vous invite dans le board ${boardName}`,
+                            boardIDRequested: boardID,
+                        },
                     },
                 }, { new: true }).select('pseudo notifications');
                 invitations.push(yield utils_1.default.toObject(invitation));
@@ -96,6 +101,25 @@ class BoardController {
                 invit.notifications = yield invit.notifications[invit.notifications.length - 1];
             }));
             return invitations;
+        });
+    }
+    static joinBoard(userID, boardID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // console.log(boardID);
+            const user = yield user_model_1.default.findByIdAndUpdate(userID, {
+                $addToSet: { boards: boardID },
+            }).select('pseudo picture');
+            const board = yield utils_1.default.toObject(yield board_models_1.default.findByIdAndUpdate(boardID, {
+                $addToSet: { members: userID },
+            }, { new: true }));
+            // for (let i = 0; i < board.length; i++) {
+            //     const boardMembers = await UserModel.find({ _id: { $in: board[i].members } }).select(
+            //         'pseudo _id picture'
+            //     );
+            //     board[i].members = await boardMembers;
+            // }
+            // console.log(board);
+            return { user, board };
         });
     }
 }

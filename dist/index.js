@@ -56,10 +56,14 @@ const io = new socket_io_1.Server(server, {
 const routes = [];
 // FAIRE UNE CLASSE SOCKET PROPREMENT
 io.on('connection', (socket) => {
-    socket.on('send invitation', ({ guestUserIDList, boardID }) => __awaiter(void 0, void 0, void 0, function* () {
-        const invitations = yield board_controller_1.default.sendBoardInvitation(guestUserIDList, boardID);
+    socket.on('send invitation', ({ senderPseudo, guestUserIDList, boardID, boardName }) => __awaiter(void 0, void 0, void 0, function* () {
+        const invitations = yield board_controller_1.default.sendBoardInvitation(senderPseudo, guestUserIDList, boardID, boardName);
         // console.log(invitation);
         io.emit('send invitation', invitations);
+    }));
+    socket.on('join board', ({ userID, boardID }) => __awaiter(void 0, void 0, void 0, function* () {
+        const { user, board } = yield board_controller_1.default.joinBoard(userID, boardID);
+        io.emit('join board', { user, board });
     }));
     console.log('User connected : ' + socket.id);
 });

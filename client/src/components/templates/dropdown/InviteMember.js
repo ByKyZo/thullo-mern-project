@@ -11,6 +11,7 @@ import socket from '../../../utils/socket';
 
 const InviteMember = ({ isOpen, setIsOpen }) => {
     const currentBoard = useSelector((state) => state.boardReducer.currentBoard);
+    const user = useSelector((state) => state.userReducer);
     const [userSuggest, setUserSuggest] = useState([]);
     const [userSelected, setUserSelected] = useState([]);
     // const [isOpenUsersSuggest, setIsOpenUsersSuggest] = useState(false);
@@ -30,8 +31,10 @@ const InviteMember = ({ isOpen, setIsOpen }) => {
 
     const handleSendInvation = () => {
         const invitationObject = {
+            senderPseudo: user.pseudo,
             guestUserIDList: userSelected,
             boardID: currentBoard._id,
+            boardName: currentBoard.name,
         };
         socket.emit('send invitation', invitationObject);
     };

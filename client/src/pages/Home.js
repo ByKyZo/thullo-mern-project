@@ -6,6 +6,7 @@ import { RiAddFill } from 'react-icons/ri';
 import { useSelector } from 'react-redux';
 import { getPicturePath } from '../utils/utils';
 import ModalCreateBoard from '../components/templates/modal/CreateBoard.jsx';
+import { v4 as uuid } from 'uuid';
 // REDIRIGER VERS LOGIN SI NON CONNECTE
 const Home = () => {
     const boards = useSelector((state) => state.boardReducer.boards);
@@ -33,7 +34,7 @@ const Home = () => {
                         {boards.map(({ _id, name, picture, members, isPrivate, owner }) => {
                             return (
                                 <Link
-                                    key={_id}
+                                    key={uuid()}
                                     to={`/board/${_id}`}
                                     className="allboards__container__items">
                                     <img

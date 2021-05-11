@@ -7,7 +7,7 @@ import { BsGrid3X3Gap } from 'react-icons/bs';
 import MediaQuery from 'react-responsive';
 import DropDown from '../utils/Dropdown';
 import { addToast, getPicturePath, isEmpty } from '../../utils/utils';
-import ProfilMenu from './modal/ProfilMenu';
+import ProfilMenu from './dropdown/ProfilMenu';
 
 const Header = ({ isHeaderBoard, boardName }) => {
     const user = useSelector((state) => state.userReducer);
@@ -120,7 +120,9 @@ const Header = ({ isHeaderBoard, boardName }) => {
                             {/* )} */}
                         </div>
                     </MediaQuery>
-                    <button className="header__right__profil" onClick={() => setIsOpenProfilMenu(true)}>
+                    <button
+                        className="header__right__profil"
+                        onClick={() => setIsOpenProfilMenu(true)}>
                         <img
                             className="header__right__profil__img"
                             src={getPicturePath('user', user.picture)}
@@ -132,13 +134,13 @@ const Header = ({ isHeaderBoard, boardName }) => {
                         </span>
                         {!isEmpty(user.notifications) && (
                             <span
-                                className="header__right__profil__notifications"
+                                className="bubble-notifications"
                                 style={{ fontSize: user.notifications.length > 99 && '0.6rem' }}>
                                 {user.notifications.length > 99 ? '99+' : user.notifications.length}
                             </span>
                         )}
-                        <ProfilMenu isOpen={isOpenProfilMenu} setIsOpen={setIsOpenProfilMenu} />
                     </button>
+                    <ProfilMenu isOpen={isOpenProfilMenu} setIsOpen={setIsOpenProfilMenu} />
                 </div>
             </header>
         </>

@@ -111,6 +111,15 @@ class UserController {
             const { userID, type, title, message } = req.body;
         });
     }
+    static deleteNotification(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { userID, notificationID } = req.body;
+            const user = yield user_model_1.default.findByIdAndUpdate(userID, {
+                $pull: { notifications: { _id: notificationID } },
+            });
+            res.status(200).send(user);
+        });
+    }
     static delete(req, res) {
         res.send('Hello from Delete');
     }

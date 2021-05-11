@@ -189,6 +189,7 @@
                 margin-right: 16px;
                 font-weight: 500;
                 font-size: 0.9rem;
+                color: $neutralDark;
                 @media (max-width: 700px) {
                     display: none;
                 }
@@ -196,21 +197,21 @@
 
             &__icon {
                 font-size: 0.7rem;
-            }
-
-            &__notifications {
-                display: inline-block;
-                @include display(flex, unset, center, center);
-                position: absolute;
-                height: 20px;
-                width: 20px;
-                background-color: $primary;
-                border-radius: 50%;
-                font-size: 0.7rem;
-                top: -2px;
-                left: -2px;
-                color: $neutralLightest;
+                color: $neutralDark;
             }
         }
     }
+}
+.bubble-notifications {
+    display: inline-block;
+    @include display(flex, unset, center, center);
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    background-color: $primary;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    top: -2px;
+    left: -2px;
+    color: $neutralLightest;
 }

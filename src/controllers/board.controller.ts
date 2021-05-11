@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { isValidObjectId } from 'mongoose';
 import { convertToObject } from 'typescript';
-import BoardModels from '../models/board.models';
+import BoardModel from '../models/board.models';
 import UserModel from '../models/user.model';
 import ErrorManager from '../utils/ErrorManager';
 import FileManager from '../utils/FileManager';
@@ -26,7 +26,7 @@ export default class BoardController {
             );
 
             const board = await Utils.toObject(
-                await BoardModels.create({
+                await BoardModel.create({
                     name,
                     isPrivate,
                     owner,
@@ -54,7 +54,7 @@ export default class BoardController {
 
         const userBoards = Utils.toObject(await UserModel.findById(userID).select('boards -_id'));
 
-        const boards = Utils.toObject(await BoardModels.find({ _id: { $in: userBoards.boards } }));
+        const boards = Utils.toObject(await BoardModel.find({ _id: { $in: userBoards.boards } }));
 
         for (let i = 0; i < boards.length; i++) {
             const boardMembers = await UserModel.find({ _id: { $in: boards[i].members } }).select(
@@ -68,7 +68,7 @@ export default class BoardController {
     public static async getBoard(req: Request, res: Response) {
         try {
             const id = req.params.id;
-            const board = Utils.toObject(await BoardModels.findById(id));
+            const board = Utils.toObject(await BoardModel.findById(id));
 
             if (!board) throw Error('BOARD_UNKNOW : Error board unknow');
 
@@ -85,7 +85,12 @@ export default class BoardController {
         }
     }
 
-    public static async sendBoardInvitation(guestUserIDList: [string], boardID: string) {
+    public static async sendBoardInvitation(
+        senderPseudo: string,
+        guestUserIDList: [string],
+        boardID: string,
+        boardName: string
+    ) {
         let invitations = [];
 
         for (let i = 0; i < guestUserIDList.length; i++) {
@@ -93,7 +98,12 @@ export default class BoardController {
                 guestUserIDList[i],
                 {
                     $addToSet: {
-                        notifications: { title: 'Board invitation', content: boardID },
+                        notifications: {
+                            type: 'BOARD_INVATION',
+                            title: 'Board Invitation',
+                            message: `${senderPseudo} vous invite dans le board ${boardName}`,
+                            boardIDRequested: boardID,
+                        },
                     },
                 },
                 { new: true }
@@ -106,5 +116,30 @@ export default class BoardController {
         });
 
         return invitations;
+    }
+
+    public static async joinBoard(userID: string, boardID: string) {
+        // console.log(boardID);
+        const user = await UserModel.findByIdAndUpdate(userID, {
+            $addToSet: { boards: boardID },
+        }).select('pseudo picture');
+        const board = await Utils.toObject(
+            await BoardModel.findByIdAndUpdate(
+                boardID,
+                {
+                    $addToSet: { members: userID },
+                },
+                { new: true }
+            )
+        );
+
+        // for (let i = 0; i < board.length; i++) {
+        //     const boardMembers = await UserModel.find({ _id: { $in: board[i].members } }).select(
+        //         'pseudo _id picture'
+        //     );
+        //     board[i].members = await boardMembers;
+        // }
+        // console.log(board);
+        return { user, board };
     }
 }

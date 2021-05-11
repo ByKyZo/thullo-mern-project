@@ -1,6 +1,6 @@
 .dropdown {
     position: absolute;
-    overflow: hidden;
+    // overflow: hidden;
     z-index: 9999;
     padding: 8px;
     &-responsive {
@@ -8,6 +8,9 @@
         left: 0;
         width: 100%;
         box-sizing: border-box;
+    }
+    &__content {
+        @include modalPreset();
     }
 }
 

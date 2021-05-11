@@ -1,11 +1,15 @@
 import { Redirect } from 'react-router-dom';
 import axios from '../../utils/axios';
 import { errorsManager, successToast } from '../../utils/utils';
+import { store } from '../store';
 import { endLoading, loading } from './loader.action';
+import { deleteNotification } from './user.action';
 
 export const CREATE_BOARD = 'CREATE_BOARD';
 export const GET_BOARD = 'GET_BOARD';
 export const GET_ALL_BOARD_BY_USERID = 'GET_ALL_BOARD_BY_USERID';
+export const CLEAN_CURRENTBOARD = 'CLEAN_CURRENTBOARD';
+export const JOIN_BOARD = 'JOIN_BOARD';
 
 export const createBoard = (data) => {
     return (dispatch) => {
@@ -58,5 +62,21 @@ export const getBoard = (boardID) => {
             .finally(() => {
                 dispatch(endLoading());
             });
+    };
+};
+
+export const cleanCurrentBoard = (boardID) => {
+    return (dispatch) => {
+        return dispatch({ type: CLEAN_CURRENTBOARD, payload: {} });
+    };
+};
+
+export const joinBoard = (currentUser, user, board) => {
+    return async (dispatch) => {
+        const currentUser = await store.getState().userReducer;
+        if (currentUser._id === user._id) {
+            return store.dispatch(getAllBoardByUserID(currentUser._id));
+        }
+        dispatch({ type: JOIN_BOARD, payload: { currentUser, user, board } });
     };
 };
