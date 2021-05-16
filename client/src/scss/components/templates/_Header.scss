@@ -5,6 +5,7 @@
     box-sizing: border-box;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
+    z-index: 9999;
     @media (max-width: 650px) {
         padding: 16px 0px;
     }
@@ -24,6 +25,9 @@
             padding: 6px;
             @media (max-width: 1100px) {
                 margin-right: 30px;
+            }
+            @media (max-width: 900px) {
+                margin-right: 20px;
             }
             @media (max-width: 650px) {
                 margin-right: 6px;
@@ -52,8 +56,11 @@
                 color: $neutralDark;
                 font-size: 1.2rem;
                 letter-spacing: -1px;
-                @media (max-width: 650px) {
+                @media (max-width: 900px) {
                     font-size: 1rem;
+                }
+                @media (max-width: 500px) {
+                    display: none;
                 }
             }
 
@@ -73,19 +80,21 @@
                 @include display(flex, unset, unset, center);
                 @include button('basic', 'basic', 'secondary');
                 font-size: 0.9rem;
-                @media (max-width: 650px) {
+                @media (max-width: 900px) {
                     padding: 0 12px;
                     height: 100%;
                     margin-left: 14px;
                 }
-
+                @media (max-width: 500px) {
+                    margin-left: 0;
+                }
                 &__icons {
                     font-size: 0.8rem;
                 }
 
                 &__label {
                     margin-left: 10px;
-                    @media (max-width: 650px) {
+                    @media (max-width: 900px) {
                         display: none;
                     }
                 }

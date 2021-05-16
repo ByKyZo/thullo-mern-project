@@ -4,8 +4,6 @@ import { addToast, clearToastByTypes, errorsManager, setRememberMeCookie } from 
 import { loading, endLoading } from './loader.action';
 import { FiUserCheck } from 'react-icons/fi';
 import { getAllBoardByUserID } from './board.action';
-import { store } from '../store';
-import userReducer from '../reducer/user.reducer';
 
 export const LOGIN = 'LOGIN';
 export const REMEMBER_ME = 'REMEMBER_ME';
@@ -17,8 +15,8 @@ export const login = (userLogin) => {
         axios
             .post('/user/login', userLogin)
             .then((res) => {
-                const { user, remember_me } = res.data;
-                setRememberMeCookie(remember_me);
+                const { user, token } = res.data;
+                setRememberMeCookie(token);
                 clearToastByTypes(['danger', 'warning']);
                 addToast(<FiUserCheck />, `Welcome ${user.pseudo} !`, 'neutral');
                 dispatch(getAllBoardByUserID(user._id));
@@ -38,14 +36,14 @@ export const rememberMe = () => {
         axios
             .get('/user/rememberme', { withCredentials: true })
             .then((res) => {
-                const { user, remember_me } = res.data;
-                setRememberMeCookie(remember_me);
+                const { user, token } = res.data;
+                setRememberMeCookie(token);
                 addToast(<FiUserCheck />, `Welcome ${user.pseudo} !`, 'neutral');
                 dispatch(getAllBoardByUserID(user._id));
                 return dispatch({ type: REMEMBER_ME, payload: user });
             })
             .catch((err) => {
-                cookie.remove('REMEMBER_ME');
+                cookie.remove('token');
                 dispatch({ type: REMEMBER_ME, payload: {} });
                 console.log('RememberMe error : ' + err);
             })
@@ -62,11 +60,12 @@ export const addNotification = (notifications) => {
     };
 };
 
-export const deleteNotification = (userID, notificationID) => {
+export const deleteNotification = (userID, notificationID, boardIDRequested) => {
     return (dispatch) => {
         const deleteNotifObject = {
             userID,
             notificationID,
+            boardIDRequested,
         };
         return axios
             .post(`/user/delete-notification`, deleteNotifObject)

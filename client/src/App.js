@@ -11,7 +11,7 @@ const App = (props) => {
     useEffect(() => {
         isLoading
             ? (document.querySelector('html').style = 'overflow : hidden')
-            : (document.querySelector('html').style = 'overflow : visisible');
+            : (document.querySelector('html').style = 'overflow : visible');
     }, [isLoading]);
 
     return (

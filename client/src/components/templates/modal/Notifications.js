@@ -6,7 +6,7 @@ import { AiOutlineAppstoreAdd } from 'react-icons/ai';
 import Button from '../../utils/Button';
 import { isEmpty } from '../../../utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteNotification, removeNotification } from '../../../redux/actions/user.action';
+import { deleteNotification } from '../../../redux/actions/user.action';
 import socket from '../../../utils/socket';
 
 const Notifications = ({ isOpen, setIsOpen }) => {
@@ -31,7 +31,7 @@ const Notifications = ({ isOpen, setIsOpen }) => {
                         Notifications
                     </span>
                     <ul className="profilmenu__notifications__list">
-                        {!isEmpty(user) &&
+                        {!isEmpty(user.notifications) ? (
                             user.notifications.map(({ _id, title, message, boardIDRequested }) => {
                                 return (
                                     <li key={_id} className="profilmenu__notifications__list__item">
@@ -57,14 +57,25 @@ const Notifications = ({ isOpen, setIsOpen }) => {
                                             <Button
                                                 className="profilmenu__notifications__list__item__left__btn-wrong"
                                                 onClick={() =>
-                                                    dispatch(deleteNotification(user._id, _id))
+                                                    dispatch(
+                                                        deleteNotification(
+                                                            user._id,
+                                                            _id,
+                                                            boardIDRequested
+                                                        )
+                                                    )
                                                 }>
                                                 <IoMdTrash />
                                             </Button>
                                         </div>
                                     </li>
                                 );
-                            })}
+                            })
+                        ) : (
+                            <h4 style={{ textAlign: 'center', marginTop: '20px' }}>
+                                You don't have notifications
+                            </h4>
+                        )}
                     </ul>
                 </div>
             </Modal>

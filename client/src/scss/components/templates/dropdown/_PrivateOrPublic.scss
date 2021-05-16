@@ -1,0 +1,34 @@
+.privateorpublic {
+    @include display(flex, column);
+    @include componentPreset();
+    width: 260px;
+
+    &__btn {
+        @include radius(medium);
+        text-align: start;
+        background-color: transparent;
+        padding: 14px;
+        transition: 0.3s;
+        cursor: pointer;
+        &:hover {
+            background-color: $neutralLight;
+        }
+
+        &__top {
+            @include display(flex, unset, unset, center);
+            color: $neutralDark2;
+            margin-bottom: 12px;
+
+            &__icon {
+                margin-right: 8px;
+            }
+        }
+        &__desc {
+            color: $secondary;
+            font-size: 0.8rem;
+        }
+    }
+}
+.privateorpublic-active {
+    background-color: $neutralLight;
+}

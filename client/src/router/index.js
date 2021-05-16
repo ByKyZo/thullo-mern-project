@@ -8,25 +8,31 @@ import Board from '../pages/Board';
 import { useSelector } from 'react-redux';
 import { isEmpty } from '../utils/utils';
 import PrivateRoute from '../components/routes/PrivateRoute.js';
+// import BoardError from '../pages/BoardError';
 
 const MainRouter = (props) => {
     const user = useSelector((state) => state.userReducer);
     const isLoading = useSelector((state) => state.loaderReducer);
-
+    // const redirect = useSelector((state) => state.redirectReducer);
     // FAIRE UNE ROUTE PRIVE POUR REDIGER VERS LOGIN SI PAS AUTH
     // ET ETRE REDIGE SUR LA PAGE ACTUEL SANS BUG (CAR ACTULLEMENT BUG 1 FOIS SUR 5...)
 
     return (
         <>
             <Router>
+                {/* {redirect && <Redirect to={redirect} />} */}
                 {!isLoading && isEmpty(user) && <Redirect to="/login" />}
                 <Switch>
+                    <PrivateRoute exact path="/allboards" component={Home} />
+                    <PrivateRoute exact path="/board/:id" component={Board} />
                     <Route exact path="/login" component={Login} />
                     <Route exact path="/register" component={Register} />
-                    <PrivateRoute exact path="/board/:id" component={Board} />
-                    <PrivateRoute exact path="/allboards" component={Home} />
-
-                    {!isLoading && !isEmpty(user) && <Redirect to="/allboards" />}
+                    {!isEmpty(user) && document.location.pathname === '/' && (
+                        <Redirect to="/login" />
+                    )}
+                    <>
+                        <h1>Error 404</h1>
+                    </>
                 </Switch>
                 <Footer />
             </Router>

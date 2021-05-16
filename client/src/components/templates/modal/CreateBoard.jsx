@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RiAddFill } from 'react-icons/ri';
 import Modal from '../../utils/Modal';
 import { MdImage, MdLock } from 'react-icons/md';
@@ -18,6 +18,18 @@ const ModalCreateBoard = ({ isOpen, setIsOpen }) => {
         owner: user._id,
     });
 
+    useEffect(() => {
+        if (!isOpen) {
+            setPicturePreview('');
+            setNewBoard({
+                name: '',
+                picture: '',
+                isPrivate: false,
+                owner: '',
+            });
+        }
+    }, [isOpen]);
+
     const handleChangePicture = async (e) => {
         if (!e.target.files[0]) return;
         const pictureFile = await e.target.files[0];
@@ -33,7 +45,7 @@ const ModalCreateBoard = ({ isOpen, setIsOpen }) => {
         data.append('picture', newBoard.picture);
         data.append('isPrivate', newBoard.isPrivate);
         data.append('owner', user._id);
-
+        setIsOpen(false);
         dispatch(createBoard(data));
     };
 
@@ -65,6 +77,7 @@ const ModalCreateBoard = ({ isOpen, setIsOpen }) => {
                     <input
                         value={newBoard.name}
                         onChange={(e) => setNewBoard({ ...newBoard, name: e.target.value })}
+                        maxLength="20"
                         className="createboardmodal__input__name"
                         type="text"
                         placeholder="Add board title"

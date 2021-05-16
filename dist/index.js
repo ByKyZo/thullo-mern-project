@@ -43,10 +43,12 @@ const board_routes_1 = __importDefault(require("./routes/board.routes"));
 const socket_io_1 = require("socket.io");
 require("./database/database");
 const board_controller_1 = __importDefault(require("./controllers/board.controller"));
+const ON_PRODUCTION = false;
 const app = express_1.default();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
-const ORIGIN = process.env.ORIGIN;
+const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
+// const ORIGIN = 'http://c24487f3706e.ngrok.io';
 const io = new socket_io_1.Server(server, {
     cors: {
         origin: ORIGIN,
@@ -65,6 +67,18 @@ io.on('connection', (socket) => {
         const { user, board } = yield board_controller_1.default.joinBoard(userID, boardID);
         io.emit('join board', { user, board });
     }));
+    socket.on('change state', ({ boardID, state }) => __awaiter(void 0, void 0, void 0, function* () {
+        yield board_controller_1.default.changeState(boardID, state);
+        io.emit('change state', { boardID, state });
+    }));
+    socket.on('ban member', ({ boardID, memberBannedID }) => __awaiter(void 0, void 0, void 0, function* () {
+        yield board_controller_1.default.banMember(boardID, memberBannedID);
+        io.emit('ban member', { boardID, memberBannedID });
+    }));
+    socket.on('change description', ({ description, boardID }) => __awaiter(void 0, void 0, void 0, function* () {
+        yield board_controller_1.default.changeDescription(description, boardID);
+        io.emit('change description', { description, boardID });
+    }));
     console.log('User connected : ' + socket.id);
 });
 /**
@@ -79,6 +93,12 @@ app.use(express_1.default.json());
  */
 app.use('/board-picture', express_1.default.static(path_1.default.join(__dirname, 'assets', 'images', 'board-picture')));
 app.use('/user-picture', express_1.default.static(path_1.default.join(__dirname, 'assets', 'images', 'user-picture')));
+if (ON_PRODUCTION) {
+    app.use(express_1.default.static(path_1.default.join(__dirname, '..', 'client', 'build')));
+    app.get('/*', (_, res) => {
+        res.sendFile(path_1.default.join(__dirname, '..', 'client', 'build', 'index.html'));
+    });
+}
 /**
  * Routes
  */

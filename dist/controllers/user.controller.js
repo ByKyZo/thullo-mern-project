@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
+const mongoose_1 = require("mongoose");
 const user_model_1 = __importDefault(require("../models/user.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -62,7 +63,7 @@ class UserController {
                             if (!same || err)
                                 throw Error('INVALID_INFORMATION : Invalid informations');
                             const jwtToken = yield UserController.createJwtToken(user._id);
-                            res.send({ user, remember_me: jwtToken });
+                            res.send({ user, token: jwtToken });
                         }
                         catch (err) {
                             const errors = ErrorManager_1.default.checkErrors(['INVALID_INFORMATION'], err);
@@ -78,21 +79,21 @@ class UserController {
         });
     }
     static rememberMe(req, res) {
-        if (!req.cookies.REMEMBER_ME)
+        if (!req.cookies.token)
             return res.status(500).send('NO_COOKIE');
-        const remember_me = req.cookies.REMEMBER_ME;
-        jsonwebtoken_1.default.verify(remember_me, process.env.SECRET_TOKEN, (err) => __awaiter(this, void 0, void 0, function* () {
+        const token = req.cookies.token;
+        jsonwebtoken_1.default.verify(token, process.env.SECRET_TOKEN, (err) => __awaiter(this, void 0, void 0, function* () {
             if (err) {
                 res.status(500).send({ message: 'INVALID_TOKEN' });
                 return console.log('Token verify error : ' + err);
             }
-            const tokenDecoded = yield jsonwebtoken_1.default.decode(remember_me, { complete: true });
+            const tokenDecoded = yield jsonwebtoken_1.default.decode(token, { complete: true });
             if (!tokenDecoded)
                 return res.status(500).send('WRONG_TOKEN');
             const userID = tokenDecoded.payload.userID;
             const user = yield user_model_1.default.findById(userID).select('-password');
             const jwtToken = yield UserController.createJwtToken(userID);
-            res.status(200).send({ user, remember_me: jwtToken });
+            res.status(200).send({ user, token: jwtToken });
         }));
     }
     static getUser(req, res) {
@@ -102,7 +103,10 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             const boardID = req.params.id;
             const board = yield utils_1.default.toObject(yield board_models_1.default.findById(boardID));
-            const users = yield user_model_1.default.find({ _id: { $nin: board.members } }).select('pseudo picture');
+            const userMembersOrWaiting = board.members.concat(board.usersWaiting);
+            const users = yield user_model_1.default.find({
+                _id: { $nin: userMembersOrWaiting },
+            }).select('pseudo picture');
             res.status(200).send(users);
         });
     }
@@ -113,10 +117,15 @@ class UserController {
     }
     static deleteNotification(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { userID, notificationID } = req.body;
+            const { userID, notificationID, boardIDRequested } = req.body;
             const user = yield user_model_1.default.findByIdAndUpdate(userID, {
                 $pull: { notifications: { _id: notificationID } },
             });
+            if (mongoose_1.isValidObjectId(boardIDRequested) && boardIDRequested) {
+                yield board_models_1.default.findByIdAndUpdate(boardIDRequested, {
+                    $pull: { usersWaiting: userID },
+                });
+            }
             res.status(200).send(user);
         });
     }

@@ -4,6 +4,7 @@ import { store } from '../redux/store';
 import { RiErrorWarningLine } from 'react-icons/ri';
 import { FiCheckCircle } from 'react-icons/fi';
 import { API_URL } from '../config';
+import { clearRedirect, redirect } from '../redux/actions/redirect.action';
 
 export const isEmpty = (value) => {
     return (
@@ -14,9 +15,10 @@ export const isEmpty = (value) => {
     );
 };
 
-export const setRememberMeCookie = (token) => {
+export const setRememberMeCookie = async (token) => {
     const cookie = new Cookies();
-    cookie.set('REMEMBER_ME', token, { maxAge: 604800000 }); // 1 week ?
+    // cookie.remove('token', { path: '/' });
+    cookie.set('token', token, { maxAge: 604800000 }); // 1 week ?
 };
 
 export const errorsManager = (err) => {
@@ -32,7 +34,10 @@ export const addToast = (icon, info, type) => {
 export const clearToastByTypes = (type) => {
     store.dispatch(clearToast(type));
 };
-
+export const warningToast = (message) => {
+    clearToastByTypes(['danger', 'warning']);
+    addToast(<RiErrorWarningLine />, message, 'warning');
+};
 export const successToast = (message) => {
     clearToastByTypes(['danger', 'warning']);
     addToast(<FiCheckCircle />, message, 'success');
@@ -47,4 +52,30 @@ export const getPicturePath = (model, image) => {
         default:
             console.log('Picture Path Error');
     }
+};
+
+export const redirectTo = (to) => {
+    store.dispatch(redirect(to));
+    // setTimeout(() => {
+    store.dispatch(clearRedirect());
+    // }, 500);
+};
+
+export const insertSpecialCharacter = (ref, character, html = false) => {
+    var doc = ref.current.ownerDocument.defaultView;
+
+    var sel = doc.getSelection();
+    var range = sel.getRangeAt(0);
+
+    // var tabNode = document.createTextNode(
+    //     html ? String.fromCodePoint(character) : String.fromCharCode(character)
+    // ); // code point
+    var tabNode = document.createTextNode(String.fromCharCode(character)); // code point
+
+    range.insertNode(tabNode);
+
+    range.setStartAfter(tabNode);
+    range.setEndAfter(tabNode);
+    sel.removeAllRanges();
+    sel.addRange(range);
 };

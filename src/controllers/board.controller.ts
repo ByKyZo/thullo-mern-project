@@ -1,11 +1,17 @@
 import { Request, Response } from 'express';
-import { isValidObjectId } from 'mongoose';
+import { isValidObjectId, MongooseDocument } from 'mongoose';
 import { convertToObject } from 'typescript';
 import BoardModel from '../models/board.models';
 import UserModel from '../models/user.model';
 import ErrorManager from '../utils/ErrorManager';
 import FileManager from '../utils/FileManager';
 import Utils from '../utils/utils';
+import { IBoard } from '../models/board.models';
+import { IUser } from '../models/user.model';
+
+// interface Board {
+
+// }
 
 export default class BoardController {
     public static async create(req: Request, res: Response) {
@@ -13,6 +19,8 @@ export default class BoardController {
         const boardPicture = req.file;
         try {
             if (!name) throw Error('MISSING_NAME : Missing board name');
+            if (name.length > 20)
+                throw Error('NAME_MAX_LENGTH : Name must be 20 characters maximum');
             if (!isValidObjectId(owner)) throw Error('INVALID_USER_ID : Error retry please');
 
             let pictureName: string = '';
@@ -42,7 +50,7 @@ export default class BoardController {
             res.status(200).send(board);
         } catch (err) {
             const errors = ErrorManager.checkErrors(
-                ['MAX_SIZE', 'INVALID_TYPE', 'MISSING_NAME', 'INVALID_USER_ID'],
+                ['MAX_SIZE', 'INVALID_TYPE', 'MISSING_NAME', 'INVALID_USER_ID', 'NAME_MAX_LENGTH'],
                 err
             );
             console.log(err);
@@ -54,7 +62,9 @@ export default class BoardController {
 
         const userBoards = Utils.toObject(await UserModel.findById(userID).select('boards -_id'));
 
-        const boards = Utils.toObject(await BoardModel.find({ _id: { $in: userBoards.boards } }));
+        const boards: Array<any> = await Utils.toObject(
+            await BoardModel.find({ _id: { $in: userBoards.boards } })
+        );
 
         for (let i = 0; i < boards.length; i++) {
             const boardMembers = await UserModel.find({ _id: { $in: boards[i].members } }).select(
@@ -67,21 +77,44 @@ export default class BoardController {
     }
     public static async getBoard(req: Request, res: Response) {
         try {
+            const userToken: string = req.cookies.token;
+            if (!userToken) throw Error('NO_TOKEN : Error token unknown');
             const id = req.params.id;
-            const board = Utils.toObject(await BoardModel.findById(id));
+            if (!isValidObjectId(id)) throw Error('INVALID_ID : Board id invalid');
+            const userID: object = await (await Utils.checkToken(userToken)).userID;
 
-            if (!board) throw Error('BOARD_UNKNOW : Error board unknow');
+            BoardModel.findById(id, async (err: any, docs: MongooseDocument) => {
+                try {
+                    if (Utils.isEmpty(docs)) throw Error('BOARD_UNKNOWN : Error board unknown');
+                    const board = await docs.toObject();
 
-            const members = await UserModel.find({ _id: { $in: board.members } }).select(
-                'picture pseudo'
-            );
+                    if (board.isPrivate) {
+                        if (!board.members.includes(userID))
+                            throw Error('PRIVATE_BOARD : Error board is private');
+                    }
+                    const members = await UserModel.find({
+                        _id: { $in: board.members },
+                    }).select('picture pseudo');
 
-            board.members = members;
+                    if (!board.members.includes(userID)) board.NOT_MEMBER = true;
+                    board.members = members;
 
-            res.status(200).send(board);
+                    board.owner = await UserModel.findById(board.owner).select('picture pseudo');
+
+                    res.status(200).send(board);
+                } catch (err) {
+                    const errors = ErrorManager.checkErrors(
+                        ['BOARD_UNKNOWN', 'PRIVATE_BOARD'],
+                        err
+                    );
+                    console.log(errors);
+                    res.sendStatus(500);
+                }
+            });
         } catch (err) {
-            const errors = ErrorManager.checkErrors(['BOARD_UNKNOW'], err);
-            res.status(500).send(errors);
+            const errors = ErrorManager.checkErrors(['BOARD_UNKNOWN', 'INVALID_ID'], err);
+            console.log(errors);
+            res.sendStatus(500);
         }
     }
 
@@ -97,7 +130,7 @@ export default class BoardController {
             const invitation = await UserModel.findByIdAndUpdate(
                 guestUserIDList[i],
                 {
-                    $addToSet: {
+                    $push: {
                         notifications: {
                             type: 'BOARD_INVATION',
                             title: 'Board Invitation',
@@ -111,6 +144,10 @@ export default class BoardController {
             invitations.push(await Utils.toObject(invitation));
         }
 
+        await BoardModel.findByIdAndUpdate(boardID, {
+            $push: { usersWaiting: guestUserIDList }, // essayer addToSet
+        });
+
         invitations.forEach(async (invit) => {
             invit.notifications = await invit.notifications[invit.notifications.length - 1];
         });
@@ -119,27 +156,49 @@ export default class BoardController {
     }
 
     public static async joinBoard(userID: string, boardID: string) {
-        // console.log(boardID);
-        const user = await UserModel.findByIdAndUpdate(userID, {
-            $addToSet: { boards: boardID },
-        }).select('pseudo picture');
-        const board = await Utils.toObject(
+        const user: IUser = Utils.toObject(
+            await UserModel.findByIdAndUpdate(userID, {
+                $addToSet: { boards: boardID },
+            }).select('pseudo picture')
+        );
+        const board: IBoard = await Utils.toObject(
             await BoardModel.findByIdAndUpdate(
                 boardID,
                 {
                     $addToSet: { members: userID },
+                    $pull: { usersWaiting: userID },
                 },
                 { new: true }
             )
         );
+        for (let i = 0; i < board.members.length; i++) {
+            const boardMembers: any = Utils.toObject(
+                await UserModel.findOne({ _id: { $in: board.members[i] } }).select(
+                    'pseudo _id picture'
+                )
+            );
+            board.members[i] = await boardMembers;
+        }
 
-        // for (let i = 0; i < board.length; i++) {
-        //     const boardMembers = await UserModel.find({ _id: { $in: board[i].members } }).select(
-        //         'pseudo _id picture'
-        //     );
-        //     board[i].members = await boardMembers;
-        // }
         // console.log(board);
         return { user, board };
+    }
+
+    public static async changeState(boardID: string, state: boolean) {
+        const board = await BoardModel.findByIdAndUpdate(boardID, { $set: { isPrivate: state } });
+    }
+
+    public static async banMember(boardID: string, memberBannedID: string) {
+        await UserModel.findByIdAndUpdate(memberBannedID, { $pull: { boards: boardID } });
+        await BoardModel.findByIdAndUpdate(boardID, { $pull: { members: memberBannedID } });
+    }
+
+    public static async changeDescription(description: string, boardID: string) {
+        console.log(description);
+        console.log(boardID);
+        const MAX_LENGTH = 600;
+
+        if (description.length > MAX_LENGTH) return;
+        await BoardModel.findByIdAndUpdate(boardID, { $set: { description: description } });
     }
 }

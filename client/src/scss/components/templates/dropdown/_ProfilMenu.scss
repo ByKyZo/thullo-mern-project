@@ -1,5 +1,6 @@
 .profilmenu {
     max-width: 500px;
+    @include componentPreset();
 
     &__navlist {
         list-style: none;

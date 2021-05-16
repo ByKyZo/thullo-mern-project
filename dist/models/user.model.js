@@ -70,7 +70,7 @@ const UserSchema = new mongoose_1.Schema({
             },
         },
     ],
-});
+}, { timestamps: true });
 UserSchema.pre('save', function (next) {
     if (!this.picture)
         this.picture = 'defaultUserPicture.png';

@@ -89,7 +89,7 @@
                     }
                 }
 
-                &__more {
+                &__others {
                     @include display(flex, unset, unset, center);
                     color: $neutralMidDark;
                     font-size: 0.9rem;

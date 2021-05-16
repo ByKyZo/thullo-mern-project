@@ -12,12 +12,13 @@ import { Server } from 'socket.io';
 import './database/database';
 import BoardController from './controllers/board.controller';
 
-const ON_PRODUCTION = true;
+const ON_PRODUCTION = false;
 
 const app: express.Application = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
+// const ORIGIN = 'http://c24487f3706e.ngrok.io';
 const io = new Server(server, {
     cors: {
         origin: ORIGIN,
@@ -42,6 +43,18 @@ io.on('connection', (socket) => {
     socket.on('join board', async ({ userID, boardID }) => {
         const { user, board } = await BoardController.joinBoard(userID, boardID);
         io.emit('join board', { user, board });
+    });
+    socket.on('change state', async ({ boardID, state }) => {
+        await BoardController.changeState(boardID, state);
+        io.emit('change state', { boardID, state });
+    });
+    socket.on('ban member', async ({ boardID, memberBannedID }) => {
+        await BoardController.banMember(boardID, memberBannedID);
+        io.emit('ban member', { boardID, memberBannedID });
+    });
+    socket.on('change description', async ({ description, boardID }) => {
+        await BoardController.changeDescription(description, boardID);
+        io.emit('change description', { description, boardID });
     });
     console.log('User connected : ' + socket.id);
 });

@@ -1,0 +1,7 @@
+.emojipicker {
+    background-color: rebeccapurple;
+    @include display(flex, unset, center, center);
+    color: white;
+    height: 150px;
+    width: 200px;
+}

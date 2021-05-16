@@ -1,21 +1,35 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { joinBoard } from '../redux/actions/board.action';
+import { useDispatch } from 'react-redux';
+import {
+    banMember,
+    changeDescription,
+    changeState,
+    joinBoard,
+} from '../redux/actions/board.action';
 import { addNotification } from '../redux/actions/user.action';
 import socket from '../utils/socket';
 
 const SocketManager = (props) => {
     const dispatch = useDispatch();
-    const currentUser = useSelector((state) => state.userReducer);
 
     useEffect(() => {
         socket.on('send invitation', (invitations) => {
             dispatch(addNotification(invitations));
         });
         socket.on('join board', ({ user, board }) => {
-            dispatch(joinBoard(currentUser, user, board));
+            dispatch(joinBoard(user, board));
         });
-    }, [dispatch]);
+        socket.on('change state', ({ boardID, state }) => {
+            dispatch(changeState(boardID, state));
+        });
+        socket.on('ban member', ({ boardID, memberBannedID }) => {
+            dispatch(banMember(boardID, memberBannedID));
+        });
+        socket.on('change description', ({ description, boardID }) => {
+            console.log('change desc');
+            dispatch(changeDescription(description, boardID));
+        });
+    }, []);
 
     return <></>;
 };

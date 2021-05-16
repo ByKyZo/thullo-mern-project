@@ -1,13 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { Transition } from 'react-transition-group';
+import { isEmpty } from '../../utils/utils';
 
 const DropDown = ({
     children,
+    contentRef,
+    contentClass,
+    allowsRef,
     isOpen,
     setIsOpen,
-    isReponsive = false,
+    isResponsive = false,
     maxWidthResponsive = 600,
+    isVertical = true,
+    title,
+    description,
     top,
     right,
     bottom,
@@ -17,44 +24,66 @@ const DropDown = ({
     bottomResponsive,
     leftResponsive,
 }) => {
-    const dropDownRef = useRef();
+    const dropdownContentRef = useRef();
+    const currentRef = isVertical ? dropdownContentRef : contentRef;
     const isBreakPoint = useMediaQuery({ query: `(max-width: ${maxWidthResponsive}px)` });
-    const [contentHeight, setContentHeight] = useState();
+    const [contentSize, setContentSize] = useState(null);
+    const heightOrWidth = isVertical ? 'maxHeight' : 'maxWidth';
     const duration = 300;
     const defaultStyle = {
         transition: `${duration}ms ease`,
-        maxHeight: '0px',
+        [heightOrWidth]: '0',
+        padding: '8px',
         overflow: 'hidden',
-        padding: '6px',
     };
     const transitionStyles = {
-        entering: { maxHeight: `${contentHeight}px`, overflow: 'hidden' },
-        entered: { maxHeight: `${contentHeight}px`, overflow: 'visible' },
-        exiting: { maxHeight: '0', overflow: 'hidden' },
-        exited: { maxHeight: '0', overflow: 'hidden' },
+        entering: {
+            [heightOrWidth]: `${contentSize}px`,
+        },
+        entered: {
+            [heightOrWidth]: `${contentSize}px`,
+        },
+        exiting: { [heightOrWidth]: '0' },
+        exited: { [heightOrWidth]: '0' },
     };
 
     useEffect(() => {
-        if (dropDownRef.current)
-            setContentHeight(dropDownRef.current.getBoundingClientRect().height);
+        if (!isOpen) return;
+        if (currentRef.current) {
+            isVertical
+                ? setContentSize(currentRef.current.getBoundingClientRect().height)
+                : setContentSize(currentRef.current.getBoundingClientRect().width);
+        }
         const handleCloseDropDown = (e) => {
-            if (!dropDownRef.current) return setIsOpen(false);
-            !dropDownRef.current.contains(e.target) && setIsOpen(false);
+            if (isEmpty(allowsRef)) {
+                if (!currentRef.current) return setIsOpen(false);
+                !currentRef.current.contains(e.target) && setIsOpen(false);
+            } else {
+                if (!currentRef.current || !allowsRef.current) return setIsOpen(false);
+                if (
+                    !currentRef.current.contains(e.target) &&
+                    !allowsRef.current.contains(e.target)
+                ) {
+                    setIsOpen(false);
+                }
+                // !currentRef.current.contains(e.target) && setIsOpen(false);
+                // !currentRef.current.contains(e.target) ||
+                //     (!allowsRef.current.contains(e.target) && setIsOpen(false));
+            }
         };
         window.addEventListener('mousedown', handleCloseDropDown);
-        if (!dropDownRef.current) return setIsOpen(false);
+        if (!currentRef.current) return setIsOpen(false);
         if (!isOpen) {
             window.removeEventListener('mousedown', handleCloseDropDown);
-            setContentHeight(null);
         }
-    }, [isOpen, setIsOpen]);
+    }, [isOpen, setIsOpen, currentRef, isVertical]);
 
     return (
         <>
             <div
-                className={`dropdown ${isReponsive && isBreakPoint ? 'dropdown-responsive' : ''}`}
+                className={`dropdown ${isResponsive && isBreakPoint ? 'dropdown-responsive' : ''}`}
                 style={
-                    isReponsive && isBreakPoint
+                    isResponsive && isBreakPoint
                         ? {
                               top: topResponsive,
                               right: rightResponsive,
@@ -66,11 +95,22 @@ const DropDown = ({
                 <Transition unmountOnExit in={isOpen} timeout={duration}>
                     {(state) => (
                         <div
+                            className={`dropdown__content`}
                             style={{
                                 ...defaultStyle,
                                 ...transitionStyles[state],
                             }}>
-                            <div className="dropdown__content" ref={dropDownRef}>
+                            <div
+                                className={`${contentClass}`}
+                                ref={isVertical && dropdownContentRef}>
+                                {title && description && (
+                                    <>
+                                        <span className="dropdown__content__title">{title}</span>
+                                        <span className="dropdown__content__description">
+                                            {description}
+                                        </span>
+                                    </>
+                                )}
                                 {children}
                             </div>
                         </div>

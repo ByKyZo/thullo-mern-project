@@ -12,22 +12,28 @@ import socket from '../../../utils/socket';
 const InviteMember = ({ isOpen, setIsOpen }) => {
     const currentBoard = useSelector((state) => state.boardReducer.currentBoard);
     const user = useSelector((state) => state.userReducer);
-    const [userSuggest, setUserSuggest] = useState([]);
+    const [usersToInvite, setUsersToInvite] = useState([]);
     const [userSelected, setUserSelected] = useState([]);
-    // const [isOpenUsersSuggest, setIsOpenUsersSuggest] = useState(false);
+    const [userSearch, setUserSearch] = useState([]);
+    const [searchValue, setSearchValue] = useState('');
 
     useEffect(() => {
         if (!isEmpty(currentBoard)) {
             axios
                 .get(`/user/all/${currentBoard._id}`)
                 .then((res) => {
-                    setUserSuggest(res.data);
+                    setUsersToInvite(res.data);
+                    setUserSearch(res.data);
                 })
                 .catch((err) => {
                     console.log(err);
                 });
         }
     }, [currentBoard]);
+
+    const handleSearchUser = () => {
+        setUserSearch(usersToInvite.filter((user) => user.pseudo.includes(searchValue)));
+    };
 
     const handleSendInvation = () => {
         const invitationObject = {
@@ -36,6 +42,8 @@ const InviteMember = ({ isOpen, setIsOpen }) => {
             boardID: currentBoard._id,
             boardName: currentBoard.name,
         };
+        setUsersToInvite(usersToInvite.filter((userSug) => !userSelected.includes(userSug._id)));
+        setUserSearch(userSearch.filter((userSug) => !userSelected.includes(userSug._id)));
         socket.emit('send invitation', invitationObject);
     };
 
@@ -46,29 +54,37 @@ const InviteMember = ({ isOpen, setIsOpen }) => {
     };
 
     return (
-        <DropDown isReponsive={true} isOpen={isOpen} setIsOpen={setIsOpen} top="50px">
-            <div className="invitemember">
-                <span className="invitemember__title">Invite to Board</span>
-                <p className="invitemember__para">Search users you want to invite to</p>
-                <div className="invitemember__input__wrapper">
-                    <input
-                        className="invitemember__input__wrapper__input"
-                        placeholder="User..."
-                        type="text"
-                    />
-                    <Button className="invitemember__input__wrapper__btn">
-                        <HiOutlineSearch />
-                    </Button>
-                </div>
-
+        <DropDown
+            contentClass="invitemember"
+            isResponsive={true}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            top="40px"
+            left="-4px"
+            title="Invite to Board"
+            description="Search users you want to invite to">
+            <div className="invitemember__input__wrapper">
+                <input
+                    className="invitemember__input__wrapper__input"
+                    placeholder="User..."
+                    type="text"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                />
+                <Button
+                    className="invitemember__input__wrapper__btn"
+                    onClick={() => handleSearchUser()}>
+                    <HiOutlineSearch />
+                </Button>
+            </div>
+            {!isEmpty(userSearch) && (
                 <ul className="invitemember__suggest">
-                    {userSuggest.map(({ _id, pseudo, picture }, index) => {
+                    {userSearch.map(({ _id, pseudo, picture }, index) => {
                         return (
                             <li
                                 key={_id}
-                                className=""
                                 style={{
-                                    marginBottom: index === userSuggest.length - 1 ? '' : '15px',
+                                    marginBottom: index === userSearch.length - 1 ? '' : '15px',
                                 }}>
                                 <button
                                     className="invitemember__suggest__item"
@@ -91,14 +107,15 @@ const InviteMember = ({ isOpen, setIsOpen }) => {
                         );
                     })}
                 </ul>
-                <Button
-                    className={`invitemember__btn-invite ${
-                        isEmpty(userSelected) ? 'invitemember__btn-invite--disabled' : ''
-                    }`}
-                    onClick={() => !isEmpty(userSelected) && handleSendInvation()}>
-                    Invite
-                </Button>
-            </div>
+            )}
+
+            <Button
+                className={`invitemember__btn-invite ${
+                    isEmpty(userSelected) ? 'invitemember__btn-invite--disabled' : ''
+                }`}
+                onClick={() => !isEmpty(userSelected) && handleSendInvation()}>
+                Invite
+            </Button>
         </DropDown>
     );
 };

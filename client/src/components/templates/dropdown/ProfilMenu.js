@@ -6,17 +6,24 @@ import { RiLogoutBoxRFill } from 'react-icons/ri';
 import { useSelector } from 'react-redux';
 import { isEmpty } from '../../../utils/utils';
 import Notifications from '../modal/Notifications';
+import { useCookies } from 'react-cookie';
 
 const ProfilMenu = ({ isOpen, setIsOpen }) => {
     const [isOpenNotification, setIsOpenNotification] = useState(false);
     const user = useSelector((state) => state.userReducer);
+    const [, , removeCookie] = useCookies();
 
     return (
         <>
             <Notifications isOpen={isOpenNotification} setIsOpen={setIsOpenNotification} />
 
-            <DropDown isOpen={isOpen} setIsOpen={setIsOpen} top="50px" right="0">
-                <div className="profilmenu">
+            <DropDown
+                contentClass="profilmenu"
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                top="50px"
+                right="0">
+                <div>
                     <ul className="profilmenu__navlist">
                         <li>
                             <button className="profilmenu__navlist__item">
@@ -43,7 +50,12 @@ const ProfilMenu = ({ isOpen, setIsOpen }) => {
                         </li>
                         <li className="profilmenu__navlist__divider"></li>
                         <li>
-                            <button className="profilmenu__navlist__item">
+                            <button
+                                className="profilmenu__navlist__item"
+                                onClick={() => {
+                                    removeCookie('token', { path: '/' });
+                                    document.location.reload();
+                                }}>
                                 <RiLogoutBoxRFill className="profilmenu__navlist__item__icon profilmenu__navlist__item__icon--logout" />
                                 Logout
                             </button>

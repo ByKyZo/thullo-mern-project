@@ -1,0 +1,160 @@
+.boardmenu {
+    @include display(flex, column, unset, unset);
+    @include componentPreset(false);
+    padding-top: 24px;
+    width: 377px;
+    height: calc(100vh - 72px);
+    box-shadow: -2px 0px 4px rgba(129, 90, 90, 0.05);
+    box-sizing: border-box;
+    @media (max-width: 600px) {
+        width: 100vw;
+    }
+
+    &__top {
+        @include display(flex, unset, space-between, center);
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        margin-bottom: 14px;
+        padding-bottom: 6px;
+
+        &__name {
+            color: $neutralDark;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: -1px;
+        }
+
+        &__btn-close {
+            background-color: transparent;
+            color: $neutralDark2;
+            display: flex;
+            font-size: 1.6rem;
+            cursor: pointer;
+        }
+    }
+
+    &__content {
+        padding-right: 12px;
+        height: 100%;
+        overflow-y: scroll;
+        &::-webkit-scrollbar {
+            transition: 0.3s;
+            width: 6px;
+            height: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba($secondary, 0.9);
+            border-radius: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background: $secondary;
+        }
+        // TITLE SEPARATOR
+        &__title {
+            @include display(flex, unset, unset, center);
+            color: $neutralMidDark;
+            margin-right: 18px;
+            &--team {
+                margin-bottom: 16px;
+            }
+            &__icon {
+                margin-right: 8px;
+            }
+            &__label {
+                font-size: 0.9rem;
+            }
+        }
+
+        &__creator {
+            &__profil {
+                margin: 14px 0 24px 0;
+                display: flex;
+
+                &__img {
+                    @include radius('small');
+                    height: 32px;
+                    width: 32px;
+                    margin-right: 12px;
+                }
+
+                &__infos {
+                    @include display(flex, column, space-between, unset);
+
+                    &__name {
+                        font-weight: 600;
+                        color: $neutralDark;
+                        letter-spacing: -1px;
+                    }
+
+                    &__date {
+                        font-size: 0.7rem;
+                        color: $neutralMidDark;
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+        &__description {
+            margin-bottom: 24px;
+
+            &__top {
+                display: flex;
+                margin-bottom: 16px;
+
+                &__btn-edit {
+                    @include button(6px 14px, 'basic', 'custom', white, $secondary);
+                    border: 1px solid $neutralMidDark;
+                    font-size: 0.8rem;
+
+                    &__icon {
+                        margin-right: 6px;
+                    }
+                }
+            }
+
+            &__para {
+                line-height: 25px;
+                padding-right: 6px;
+                white-space: pre-wrap;
+                word-break: break-all;
+            }
+        }
+        &__team {
+            &__top {
+                margin-bottom: 16px;
+            }
+
+            &__list {
+                list-style: none;
+                padding-right: 6px;
+
+                &__item {
+                    @include display(flex, unset, unset, center);
+
+                    &__img {
+                        @extend .boardmenu__content__creator__profil__img;
+                    }
+
+                    &__pseudo {
+                        @extend .boardmenu__content__creator__profil__infos__name;
+                    }
+
+                    &__admin {
+                        margin-left: auto;
+                        color: $neutralMidDark;
+                        font-size: 0.9rem;
+                        margin-right: 16px;
+                    }
+
+                    &__btn-remove {
+                        margin-left: auto;
+                        @include button(6px 12px, 'basic', 'custom', white, $warning);
+                        border: 1px solid $warning;
+                        font-size: 0.9rem;
+                    }
+                }
+            }
+        }
+    }
+}

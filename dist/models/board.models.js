@@ -27,10 +27,18 @@ const BoardSchema = new mongoose_2.Schema({
     members: {
         type: [String],
     },
-});
+    usersWaiting: {
+        type: [String],
+    },
+    description: {
+        type: String,
+        default: 'Ceci est une description',
+    },
+}, { timestamps: true });
 BoardSchema.pre('save', function (next) {
     if (!this.picture)
         this.picture = 'defaultBoardPicture.png';
     next();
 });
+// export IBoard;
 exports.default = mongoose_1.default.model('board', BoardSchema);
