@@ -1,3 +1,4 @@
+import { isEmpty } from '../../utils/utils';
 import {
     GET_BOARD,
     CREATE_BOARD,
@@ -7,6 +8,16 @@ import {
     CHANGE_STATE,
     BAN_MEMBER,
     CHANGE_DESCRIPTION,
+    ADD_LIST,
+    LEAVE_BOARD,
+    DELETE_BOARD,
+    ADD_CARD,
+    DELETE_LIST,
+    RENAME_LIST,
+    REORDER_LIST,
+    ASSIGN_MEMBER,
+    CHANGE_CARD_TITLE,
+    CHANGE_CARD_DESCRIPTION,
 } from '../actions/board.action';
 
 const initialState = {
@@ -119,7 +130,167 @@ export default function boardReducer(state = initialState, action) {
                 };
             }
             return { ...state };
+        case ADD_LIST:
+            if (state.currentBoard._id !== action.payload.boardID || isEmpty(state.currentBoard))
+                return { ...state };
+
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    lists: [...state.currentBoard.lists, action.payload.listCreated],
+                },
+            };
+        case ADD_CARD:
+            if (state.currentBoard._id !== action.payload.boardID || isEmpty(state.currentBoard))
+                return { ...state };
+
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    lists: state.currentBoard.lists.map((list) => {
+                        if (
+                            state.currentBoard._id === action.payload.boardID &&
+                            list._id === action.payload.listID
+                        )
+                            list.cards.push(action.payload.cardCreated);
+                        return list;
+                    }),
+                },
+            };
+        case RENAME_LIST:
+            if (state.currentBoard._id !== action.payload.boardID) return { ...state };
+
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    lists: state.currentBoard.lists.map((list) => {
+                        if (list._id === action.payload.listID) list.name = action.payload.rename;
+                        return list;
+                    }),
+                },
+            };
+        case REORDER_LIST:
+            if (
+                state.currentBoard._id !== action.payload.boardID ||
+                action.payload.currentUser._id === action.payload.userID
+            )
+                return { ...state };
+
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    lists: action.payload.listsReorder,
+                },
+            };
+        case DELETE_LIST:
+            if (state.currentBoard._id !== action.payload.boardID || isEmpty(state.currentBoard))
+                return { ...state };
+
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    lists: state.currentBoard.lists.filter(
+                        (list) => list._id !== action.payload.listID
+                    ),
+                },
+            };
+        case ASSIGN_MEMBER:
+            if (state.currentBoard._id !== action.payload.boardID) return { ...state };
+
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    lists: state.currentBoard.lists.map((list) => {
+                        if (list._id === action.payload.listID) {
+                            list.cards.forEach((card) => {
+                                if (card._id === action.payload.cardID) {
+                                    card.members = [...action.payload.assignedMembers];
+                                }
+                            });
+                        }
+
+                        return list;
+                    }),
+                },
+            };
+        case CHANGE_CARD_TITLE:
+            if (state.currentBoard._id !== action.payload.boardID) return { ...state };
+
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    lists: state.currentBoard.lists.map((list) => {
+                        if (list._id === action.payload.listID) {
+                            list.cards.forEach((card) => {
+                                if (card._id === action.payload.cardID) {
+                                    card.title = action.payload.cardTitle;
+                                }
+                            });
+                        }
+                        return list;
+                    }),
+                },
+            };
+        case CHANGE_CARD_DESCRIPTION:
+            if (state.currentBoard._id !== action.payload.boardID) return { ...state };
+
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    lists: state.currentBoard.lists.map((list) => {
+                        if (list._id === action.payload.listID) {
+                            list.cards.forEach((card) => {
+                                if (card._id === action.payload.cardID) {
+                                    card.description = action.payload.description;
+                                }
+                            });
+                        }
+                        return list;
+                    }),
+                },
+            };
+        case LEAVE_BOARD:
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    members: state.currentBoard.members.filter((member) => {
+                        if (
+                            member._id === action.payload.userID &&
+                            state.currentBoard._id === action.payload.boardID
+                        ) {
+                            if (action.payload.currentUser._id === action.payload.userID)
+                                document.location.reload();
+                            return false;
+                        }
+                        return true;
+                    }),
+                },
+                boards: state.boards.filter((board) => {
+                    return board._id === action.payload.boardID &&
+                        action.payload.currentUser._id === action.payload.userID
+                        ? false
+                        : true;
+                }),
+            };
+        case DELETE_BOARD:
+            return {
+                ...state,
+                currentBoard:
+                    state.currentBoard._id === action.payload.boardID
+                        ? 'BOARD_ERROR'
+                        : { ...state.currentBoard },
+                boards: state.boards.filter((board) => board._id !== action.payload.boardID),
+            };
         default:
-            return state;
+            return { ...state };
     }
 }

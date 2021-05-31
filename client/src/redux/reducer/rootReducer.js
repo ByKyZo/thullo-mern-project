@@ -4,6 +4,7 @@ import boardReducer from './board.reducer';
 import loaderReducer from './loader.reducer';
 import toastReducer from './toast.reducer';
 import redirectReducer from './redirect.reducer';
+import modalReducer from './modal.reducer';
 
 export default combineReducers({
     userReducer,
@@ -11,4 +12,5 @@ export default combineReducers({
     loaderReducer,
     toastReducer,
     redirectReducer,
+    modalReducer,
 });

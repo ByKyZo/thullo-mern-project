@@ -34,6 +34,66 @@ const BoardSchema = new mongoose_2.Schema({
         type: String,
         default: 'Ceci est une description',
     },
+    lists: [
+        {
+            name: {
+                type: String,
+                required: true,
+            },
+            cards: [
+                {
+                    title: {
+                        type: String,
+                        default: 'CardName',
+                    },
+                    picture: {
+                        type: String,
+                    },
+                    description: {
+                        type: String,
+                        default: '',
+                    },
+                    members: {
+                        type: [String],
+                    },
+                    labels: [
+                        {
+                            name: {
+                                type: String,
+                            },
+                            color: {
+                                type: String,
+                            },
+                        },
+                    ],
+                    attachments: [
+                        {
+                            name: {
+                                type: String,
+                            },
+                            filePath: {
+                                type: String,
+                            },
+                            createdAt: {
+                                type: Date,
+                            },
+                        },
+                    ],
+                    comment: [
+                        {
+                            userID: {
+                                type: String,
+                            },
+                            message: {
+                                type: String,
+                            },
+                        },
+                        { timestamps: true },
+                    ],
+                },
+            ],
+        },
+    ],
 }, { timestamps: true });
 BoardSchema.pre('save', function (next) {
     if (!this.picture)

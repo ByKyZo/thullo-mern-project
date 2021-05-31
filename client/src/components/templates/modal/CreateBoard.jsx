@@ -33,7 +33,7 @@ const ModalCreateBoard = ({ isOpen, setIsOpen }) => {
     const handleChangePicture = async (e) => {
         if (!e.target.files[0]) return;
         const pictureFile = await e.target.files[0];
-        console.log(pictureFile);
+        // console.log(pictureFile);
         setNewBoard({ ...newBoard, picture: pictureFile });
         const picturePreviewURL = await URL.createObjectURL(pictureFile);
         setPicturePreview(picturePreviewURL);
@@ -51,7 +51,14 @@ const ModalCreateBoard = ({ isOpen, setIsOpen }) => {
 
     return (
         <>
-            <Modal hasCloseButton={true} isOpen={isOpen} setIsOpen={setIsOpen}>
+            <Modal
+                hasCloseButton={true}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                hasChoiceButton={true}
+                btnConfirmIcon={<RiAddFill />}
+                btnConfirmMessage="Create"
+                confirmFunction={() => handleCreateBoard()}>
                 <div className="createboardmodal">
                     <label
                         className={`createboardmodal__input__image ${
@@ -99,19 +106,6 @@ const ModalCreateBoard = ({ isOpen, setIsOpen }) => {
                             }>
                             <MdLock className="createboardmodal__button__wrapper__item__icon" />{' '}
                             Private
-                        </Button>
-                    </div>
-                    <div className="createboardmodal__board">
-                        <Button
-                            className="createboardmodal__board__cancel"
-                            onClick={() => setIsOpen(false)}>
-                            Cancel
-                        </Button>
-                        <Button
-                            className="createboardmodal__board__create"
-                            onClick={() => handleCreateBoard()}>
-                            <RiAddFill className="createboardmodal__board__create__icon" />{' '}
-                            <span className="createboardmodal__board__create__label">Create</span>
                         </Button>
                     </div>
                 </div>

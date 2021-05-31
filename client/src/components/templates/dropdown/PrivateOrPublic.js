@@ -19,6 +19,7 @@ const PrivateOrPublic = ({ isOpen, setIsOpen }) => {
         <DropDown
             contentClass="privateorpublic"
             left="-6px"
+            top="45px"
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             title="Visibility"

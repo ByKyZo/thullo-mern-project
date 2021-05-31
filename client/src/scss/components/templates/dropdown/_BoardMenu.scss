@@ -50,21 +50,6 @@
         &::-webkit-scrollbar-thumb:hover {
             background: $secondary;
         }
-        // TITLE SEPARATOR
-        &__title {
-            @include display(flex, unset, unset, center);
-            color: $neutralMidDark;
-            margin-right: 18px;
-            &--team {
-                margin-bottom: 16px;
-            }
-            &__icon {
-                margin-right: 8px;
-            }
-            &__label {
-                font-size: 0.9rem;
-            }
-        }
 
         &__creator {
             &__profil {
@@ -103,7 +88,7 @@
                 margin-bottom: 16px;
 
                 &__btn-edit {
-                    @include button(6px 14px, 'basic', 'custom', white, $secondary);
+                    @include button(6px 14px, 'basic', 'custom-outline', $secondary);
                     border: 1px solid $neutralMidDark;
                     font-size: 0.8rem;
 
@@ -117,7 +102,8 @@
                 line-height: 25px;
                 padding-right: 6px;
                 white-space: pre-wrap;
-                word-break: break-all;
+                word-break: break-word;
+                font-weight: 500;
             }
         }
         &__team {
@@ -149,12 +135,22 @@
 
                     &__btn-remove {
                         margin-left: auto;
-                        @include button(6px 12px, 'basic', 'custom', white, $warning);
+                        @include button(6px 12px, 'basic', 'custom-outline', $warning);
                         border: 1px solid $warning;
                         font-size: 0.9rem;
                     }
                 }
             }
+        }
+        &__btn-leave {
+            @include button('basic', 'basic', 'custom-outline', $warning, white);
+            width: 100%;
+            margin-top: 12px;
+        }
+        &__btn-delete {
+            @extend .boardmenu__content__btn-leave;
+
+            // @include button('basic', 'basic', custom, rgb(185, 71, 71));
         }
     }
 }

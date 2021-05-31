@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { Transition } from 'react-transition-group';
 import { isEmpty } from '../../utils/utils';
+import PropTypes from 'prop-types';
 
 const DropDown = ({
     children,
@@ -33,18 +34,20 @@ const DropDown = ({
     const defaultStyle = {
         transition: `${duration}ms ease`,
         [heightOrWidth]: '0',
-        padding: '8px',
+        // padding: '8px',
         overflow: 'hidden',
     };
     const transitionStyles = {
         entering: {
             [heightOrWidth]: `${contentSize}px`,
+            overflow: 'hidden',
         },
         entered: {
             [heightOrWidth]: `${contentSize}px`,
+            overflow: 'visible',
         },
-        exiting: { [heightOrWidth]: '0' },
-        exited: { [heightOrWidth]: '0' },
+        exiting: { [heightOrWidth]: '0', overflow: 'hidden' },
+        exited: { [heightOrWidth]: '0', overflow: 'hidden' },
     };
 
     useEffect(() => {
@@ -66,9 +69,6 @@ const DropDown = ({
                 ) {
                     setIsOpen(false);
                 }
-                // !currentRef.current.contains(e.target) && setIsOpen(false);
-                // !currentRef.current.contains(e.target) ||
-                //     (!allowsRef.current.contains(e.target) && setIsOpen(false));
             }
         };
         window.addEventListener('mousedown', handleCloseDropDown);
@@ -76,7 +76,7 @@ const DropDown = ({
         if (!isOpen) {
             window.removeEventListener('mousedown', handleCloseDropDown);
         }
-    }, [isOpen, setIsOpen, currentRef, isVertical]);
+    }, [isOpen, setIsOpen, currentRef, isVertical, allowsRef]);
 
     return (
         <>
@@ -119,6 +119,11 @@ const DropDown = ({
             </div>
         </>
     );
+};
+
+DropDown.propTypes = {
+    isOpen: PropTypes.bool,
+    setIsOpen: PropTypes.func,
 };
 
 export default DropDown;

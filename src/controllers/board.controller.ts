@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
 import { isValidObjectId, MongooseDocument } from 'mongoose';
-import { convertToObject } from 'typescript';
 import BoardModel from '../models/board.models';
 import UserModel from '../models/user.model';
 import ErrorManager from '../utils/ErrorManager';
 import FileManager from '../utils/FileManager';
 import Utils from '../utils/utils';
-import { IBoard } from '../models/board.models';
+import { IBoard, ICard, IList } from '../models/board.models';
 import { IUser } from '../models/user.model';
-
-// interface Board {
-
-// }
+import ListController from './list.controller';
 
 export default class BoardController {
+    public static async GetUsersByID(usersID: string[] | IUser[]): Promise<IUser[]> {
+        return await UserModel.find({ _id: { $in: usersID } }).select('pseudo picture');
+    }
+
     public static async create(req: Request, res: Response) {
         const { name, isPrivate, owner } = req.body;
         const boardPicture = req.file;
@@ -81,12 +81,12 @@ export default class BoardController {
             if (!userToken) throw Error('NO_TOKEN : Error token unknown');
             const id = req.params.id;
             if (!isValidObjectId(id)) throw Error('INVALID_ID : Board id invalid');
-            const userID: object = await (await Utils.checkToken(userToken)).userID;
+            const userID: any = await (await Utils.checkToken(userToken)).userID;
 
             BoardModel.findById(id, async (err: any, docs: MongooseDocument) => {
                 try {
                     if (Utils.isEmpty(docs)) throw Error('BOARD_UNKNOWN : Error board unknown');
-                    const board = await docs.toObject();
+                    const board: IBoard = await docs.toObject();
 
                     if (board.isPrivate) {
                         if (!board.members.includes(userID))
@@ -97,9 +97,20 @@ export default class BoardController {
                     }).select('picture pseudo');
 
                     if (!board.members.includes(userID)) board.NOT_MEMBER = true;
+
+                    // TRANSFORM USER ID BY REAL USER
+                    for (let i = 0; i < board.lists.length; i++) {
+                        for (let j = 0; j < board.lists[i].cards.length; j++) {
+                            const cardMembers = await BoardController.GetUsersByID(
+                                board.lists[i].cards[j].members
+                            );
+                            board.lists[i].cards[j].members = cardMembers;
+                        }
+                    }
+
                     board.members = members;
 
-                    board.owner = await UserModel.findById(board.owner).select('picture pseudo');
+                    board.owner = (await UserModel.findById(board.owner)) as IUser;
 
                     res.status(200).send(board);
                 } catch (err) {
@@ -180,7 +191,6 @@ export default class BoardController {
             board.members[i] = await boardMembers;
         }
 
-        // console.log(board);
         return { user, board };
     }
 
@@ -194,11 +204,31 @@ export default class BoardController {
     }
 
     public static async changeDescription(description: string, boardID: string) {
-        console.log(description);
-        console.log(boardID);
-        const MAX_LENGTH = 600;
-
-        if (description.length > MAX_LENGTH) return;
         await BoardModel.findByIdAndUpdate(boardID, { $set: { description: description } });
+    }
+
+    public static async leaveBoard(userID: string, boardID: string) {
+        await BoardModel.findByIdAndUpdate(boardID, { $pull: { members: userID } });
+        await UserModel.findByIdAndUpdate(userID, { $pull: { boards: boardID } });
+    }
+    public static async deleteBoard(boardID: string) {
+        console.log(boardID);
+        await BoardModel.findByIdAndRemove(boardID);
+    }
+    public static async getAvailableAssignedMembers(req: Request, res: Response) {
+        const boardID: string = req.params.id;
+        const { cardID, listID } = req.body;
+
+        const board: IBoard = await Utils.toObject(await BoardModel.findById(boardID));
+
+        const card: ICard = await ListController.getCardFromDB(boardID, listID, cardID);
+
+        if (!card) return console.log('getAvailableAssignedMembers() CARD NULL');
+
+        const boardMembers = board.members as string[];
+
+        const members = await BoardController.GetUsersByID(boardMembers);
+
+        res.status(200).send(members);
     }
 }

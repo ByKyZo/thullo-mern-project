@@ -21,8 +21,8 @@ const ProfilMenu = ({ isOpen, setIsOpen }) => {
                 contentClass="profilmenu"
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
-                top="50px"
-                right="0">
+                top="60px"
+                right="10px">
                 <div>
                     <ul className="profilmenu__navlist">
                         <li>

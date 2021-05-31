@@ -18,6 +18,7 @@ const InviteMember = ({ isOpen, setIsOpen }) => {
     const [searchValue, setSearchValue] = useState('');
 
     useEffect(() => {
+
         if (!isEmpty(currentBoard)) {
             axios
                 .get(`/user/all/${currentBoard._id}`)
@@ -59,7 +60,7 @@ const InviteMember = ({ isOpen, setIsOpen }) => {
             isResponsive={true}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            top="40px"
+            top="46px"
             left="-4px"
             title="Invite to Board"
             description="Search users you want to invite to">

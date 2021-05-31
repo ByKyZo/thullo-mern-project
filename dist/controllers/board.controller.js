@@ -18,9 +18,13 @@ const user_model_1 = __importDefault(require("../models/user.model"));
 const ErrorManager_1 = __importDefault(require("../utils/ErrorManager"));
 const FileManager_1 = __importDefault(require("../utils/FileManager"));
 const utils_1 = __importDefault(require("../utils/utils"));
-// interface Board {
-// }
+const list_controller_1 = __importDefault(require("./list.controller"));
 class BoardController {
+    static GetUsersByID(usersID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield user_model_1.default.find({ _id: { $in: usersID } }).select('pseudo picture');
+        });
+    }
     static create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, isPrivate, owner } = req.body;
@@ -92,8 +96,15 @@ class BoardController {
                         }).select('picture pseudo');
                         if (!board.members.includes(userID))
                             board.NOT_MEMBER = true;
+                        // TRANSFORM USER ID BY REAL USER
+                        for (let i = 0; i < board.lists.length; i++) {
+                            for (let j = 0; j < board.lists[i].cards.length; j++) {
+                                const cardMembers = yield BoardController.GetUsersByID(board.lists[i].cards[j].members);
+                                board.lists[i].cards[j].members = cardMembers;
+                            }
+                        }
                         board.members = members;
-                        board.owner = yield user_model_1.default.findById(board.owner).select('picture pseudo');
+                        board.owner = (yield user_model_1.default.findById(board.owner));
                         res.status(200).send(board);
                     }
                     catch (err) {
@@ -148,7 +159,6 @@ class BoardController {
                 const boardMembers = utils_1.default.toObject(yield user_model_1.default.findOne({ _id: { $in: board.members[i] } }).select('pseudo _id picture'));
                 board.members[i] = yield boardMembers;
             }
-            // console.log(board);
             return { user, board };
         });
     }
@@ -165,12 +175,32 @@ class BoardController {
     }
     static changeDescription(description, boardID) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(description);
-            console.log(boardID);
-            const MAX_LENGTH = 600;
-            if (description.length > MAX_LENGTH)
-                return;
             yield board_models_1.default.findByIdAndUpdate(boardID, { $set: { description: description } });
+        });
+    }
+    static leaveBoard(userID, boardID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield board_models_1.default.findByIdAndUpdate(boardID, { $pull: { members: userID } });
+            yield user_model_1.default.findByIdAndUpdate(userID, { $pull: { boards: boardID } });
+        });
+    }
+    static deleteBoard(boardID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(boardID);
+            yield board_models_1.default.findByIdAndRemove(boardID);
+        });
+    }
+    static getAvailableAssignedMembers(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const boardID = req.params.id;
+            const { cardID, listID } = req.body;
+            const board = yield utils_1.default.toObject(yield board_models_1.default.findById(boardID));
+            const card = yield list_controller_1.default.getCardFromDB(boardID, listID, cardID);
+            if (!card)
+                return console.log('getAvailableAssignedMembers() CARD NULL');
+            const boardMembers = board.members;
+            const members = yield BoardController.GetUsersByID(boardMembers);
+            res.status(200).send(members);
         });
     }
 }

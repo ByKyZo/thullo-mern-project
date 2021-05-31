@@ -1,0 +1,29 @@
+#board {
+    @include radius('big');
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    padding: 15px;
+    background-color: $neutralMidlLight;
+    width: 100%;
+    box-sizing: border-box;
+    height: calc(100vh - 167px);
+    display: flex;
+    align-items: flex-start;
+    overflow-y: auto;
+    user-select: none;
+    position: relative;
+    @media (max-width: 900px) {
+        height: calc(100vh - 157px);
+    }
+
+    &::-webkit-scrollbar {
+        transition: 0.3s;
+        width: 6px;
+        height: 14px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba($primary, 0.6);
+        border-radius: 6px;
+    }
+}

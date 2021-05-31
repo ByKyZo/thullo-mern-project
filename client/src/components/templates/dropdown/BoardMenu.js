@@ -4,30 +4,58 @@ import DropDown from '../../utils/Dropdown';
 import { CgClose } from 'react-icons/cg';
 import { MdEdit, MdDescription } from 'react-icons/md';
 import { FaUserCircle } from 'react-icons/fa';
-import { getPicturePath, isEmpty } from '../../../utils/utils';
+import { cutMongooseTimestampInDate, getPicturePath, isEmpty } from '../../../utils/utils';
 import socket from '../../../utils/socket';
-import EditDescription from '../modal/EditDescription';
+import ContentEditable from '../ContentEditable';
+import CategoryTitle from '../../layouts/CategoryTitle';
 
 const BoardMenu = ({ isOpen, setIsOpen }) => {
     const descriptionRef = useRef();
     const boardMenuRef = useRef();
     const board = useSelector((state) => state.boardReducer.currentBoard);
+    const user = useSelector((state) => state.userReducer);
     const [isEditDescription, setIsEditDescription] = useState(false);
+
+    const isBoardOwner = () => {
+        return !isEmpty(user) && !isEmpty(board) && board.owner._id === user._id;
+    };
+
+    const handleFormatDate = () => {
+        if (isEmpty(board)) return;
+        const { dayNum, monthLetter, years } = cutMongooseTimestampInDate(board.createdAt);
+        return `on ${dayNum} ${monthLetter}, ${years} `;
+    };
 
     const handleBanMember = (memberBannedID) => {
         const banMemberObject = {
             boardID: board._id,
             memberBannedID,
         };
-
         socket.emit('ban member', banMemberObject);
     };
 
+    const handleSaveDescription = (newDesc) => {
+        socket.emit('change description', { description: newDesc, boardID: board._id });
+        setIsEditDescription(false);
+    };
+
+    const handleLeaveBoard = () => {
+        const leaveBoardObject = {
+            userID: user._id,
+            boardID: board._id,
+        };
+        socket.emit('leave board', leaveBoardObject);
+    };
+
+    const handleDeleteBoard = () => {
+        const boardID = board._id;
+        socket.emit('delete board', boardID);
+    };
     useEffect(() => {
         if (!isEmpty(board.description) && descriptionRef.current) {
             descriptionRef.current.innerHTML = board.description;
         }
-    }, [board.description, isOpen]);
+    }, [board.description, isOpen, isEditDescription]);
 
     return (
         <>
@@ -36,7 +64,7 @@ const BoardMenu = ({ isOpen, setIsOpen }) => {
                 contentRef={boardMenuRef}
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
-                top="-4px"
+                top="0"
                 right="-8px">
                 <div className="boardmenu" ref={boardMenuRef}>
                     <div className="boardmenu__top">
@@ -49,10 +77,7 @@ const BoardMenu = ({ isOpen, setIsOpen }) => {
                     </div>
                     <div className="boardmenu__content">
                         <div className="boardmenu__content__creator">
-                            <span className="boardmenu__content__title">
-                                <FaUserCircle className="boardmenu__content__title__icon" />
-                                <span className="boardmenu__content__title__label">Made by</span>
-                            </span>
+                            <CategoryTitle icon={<FaUserCircle />} title="Made by" />
                             <div className="boardmenu__content__creator__profil">
                                 <img
                                     className="boardmenu__content__creator__profil__img"
@@ -67,20 +92,19 @@ const BoardMenu = ({ isOpen, setIsOpen }) => {
                                         {!isEmpty(board) && board.owner.pseudo}
                                     </span>
                                     <span className="boardmenu__content__creator__profil__infos__date">
-                                        on 4 July, 2020
+                                        {handleFormatDate()}
                                     </span>
                                 </div>
                             </div>
                         </div>
                         <div className="boardmenu__content__description">
                             <div className="boardmenu__content__description__top">
-                                <span className="boardmenu__content__title">
-                                    <MdDescription className="boardmenu__content__title__icon" />
-                                    <span className="boardmenu__content__title__label">
-                                        Description
-                                    </span>
-                                </span>
-                                {!isEditDescription && (
+                                <CategoryTitle
+                                    icon={<MdDescription />}
+                                    title="Description"
+                                    withMarginBottom={false}
+                                />
+                                {!isEditDescription && isBoardOwner() && (
                                     <button
                                         className="boardmenu__content__description__top__btn-edit"
                                         onClick={() => setIsEditDescription(!isEditDescription)}>
@@ -90,27 +114,19 @@ const BoardMenu = ({ isOpen, setIsOpen }) => {
                                 )}
                             </div>
                             {isEditDescription ? (
-                                <EditDescription
-                                    boardID={board._id}
-                                    description={board.description}
-                                    isOpen={isEditDescription}
+                                <ContentEditable
+                                    content={board.description}
+                                    submitFunc={handleSaveDescription}
                                     setIsOpen={setIsEditDescription}
                                 />
                             ) : (
                                 <p
                                     ref={descriptionRef}
-                                    className="boardmenu__content__description__para">
-                                    {/* {board.description} */}
-                                </p>
+                                    className="boardmenu__content__description__para"></p>
                             )}
                         </div>
                         <div className="boardmenu__content__team">
-                            <div className="boardmenu__content__team__top">
-                                <span className="boardmenu__content__title">
-                                    <MdDescription className="boardmenu__content__title__icon" />
-                                    <span className="boardmenu__content__title__label">Team</span>
-                                </span>
-                            </div>
+                            <CategoryTitle icon={<MdDescription />} title="Team" />
                             <ul className="boardmenu__content__team__list">
                                 {!isEmpty(board) &&
                                     board.members.map((member, index) => {
@@ -137,17 +153,33 @@ const BoardMenu = ({ isOpen, setIsOpen }) => {
                                                         Admin
                                                     </span>
                                                 ) : (
-                                                    <button
-                                                        className="boardmenu__content__team__list__item__btn-remove"
-                                                        onClick={() => handleBanMember(member._id)}>
-                                                        Remove
-                                                    </button>
+                                                    isBoardOwner() && (
+                                                        <button
+                                                            className="boardmenu__content__team__list__item__btn-remove"
+                                                            onClick={() =>
+                                                                handleBanMember(member._id)
+                                                            }>
+                                                            Remove
+                                                        </button>
+                                                    )
                                                 )}
                                             </li>
                                         );
                                     })}
                             </ul>
                         </div>
+                        <button
+                            className="boardmenu__content__btn-leave"
+                            onClick={() => handleLeaveBoard()}>
+                            Leave
+                        </button>
+                        {isBoardOwner() && (
+                            <button
+                                className="boardmenu__content__btn-delete"
+                                onClick={() => handleDeleteBoard()}>
+                                Delete Board
+                            </button>
+                        )}
                     </div>
                 </div>
             </DropDown>

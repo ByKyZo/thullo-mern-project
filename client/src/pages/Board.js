@@ -6,13 +6,12 @@ import { cleanCurrentBoard, getBoard } from '../redux/actions/board.action';
 import Button from '../components/utils/Button';
 import { HiDotsHorizontal } from 'react-icons/hi';
 import { MdLock, MdAdd } from 'react-icons/md';
-import TableItem from '../components/templates/board/TableItem';
-import AddList from '../components/templates/board/AddList';
 import { getPicturePath, isEmpty } from '../utils/utils';
 import InviteMember from '../components/templates/dropdown/InviteMember';
 import BoardError from './BoardError';
 import PrivateOrPublic from '../components/templates/dropdown/PrivateOrPublic';
 import BoardMenu from '../components/templates/dropdown/BoardMenu';
+import ListManager from '../components/templates/board/ListManager';
 
 const Board = (props) => {
     const { id } = useParams();
@@ -110,12 +109,8 @@ const Board = (props) => {
                                 </div>
                             </div>
                         )}
-
-                        <div className="board__content">
-                            <TableItem />
-                            <TableItem />
-                            <AddList isNewTable={true} />
-                        </div>
+                        {/* ALL LIST */}
+                        <ListManager />
                     </div>
                 </PageTemplate>
             )}

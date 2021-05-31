@@ -2,7 +2,7 @@ import express from 'express';
 import * as http from 'http';
 import path from 'path';
 import dotenv from 'dotenv';
-dotenv.config({ path: path.join(__dirname, '..', 'config', '.env') });
+dotenv.config({ path: path.join(__dirname, '..', 'config', '.env.local') });
 import cors from 'cors';
 import { CommonRoutesConfig } from './routes/common.routes.config';
 import cookieParser from 'cookie-parser';
@@ -11,6 +11,7 @@ import BoardRoutes from './routes/board.routes';
 import { Server } from 'socket.io';
 import './database/database';
 import BoardController from './controllers/board.controller';
+import ListController from './controllers/list.controller';
 
 const ON_PRODUCTION = false;
 
@@ -18,13 +19,13 @@ const app: express.Application = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
-// const ORIGIN = 'http://c24487f3706e.ngrok.io';
 const io = new Server(server, {
     cors: {
         origin: ORIGIN,
         credentials: true,
     },
 });
+
 const routes: Array<CommonRoutesConfig> = [];
 
 // FAIRE UNE CLASSE SOCKET PROPREMENT
@@ -56,6 +57,55 @@ io.on('connection', (socket) => {
         await BoardController.changeDescription(description, boardID);
         io.emit('change description', { description, boardID });
     });
+    socket.on('add list', async ({ name, boardID, userID }) => {
+        const listCreated = await ListController.addList(name, boardID);
+        io.emit('add list', { listCreated, boardID, userID });
+    });
+    socket.on('add card', async ({ name, boardID, listID, userID }) => {
+        const cardCreated = await ListController.addCard(name, boardID, listID);
+        io.emit('add card', { cardCreated, listID, boardID, userID });
+    });
+    socket.on('delete list', async ({ listID, boardID }) => {
+        await ListController.deleteList(listID, boardID);
+        io.emit('delete list', { listID, boardID });
+    });
+    socket.on('rename list', async ({ rename, listID, boardID }) => {
+        await ListController.renameList(rename, listID, boardID);
+        io.emit('rename list', { rename, listID, boardID });
+    });
+    socket.on('reorder list', async ({ listsReorder, boardID, userID }) => {
+        await ListController.reorderList(listsReorder, boardID);
+        io.emit('reorder list', { listsReorder, boardID, userID });
+    });
+    socket.on('assign member card', async ({ assignedMembersID, boardID, listID, cardID }) => {
+        const assignedMembers = await ListController.assignMember(
+            assignedMembersID,
+            boardID,
+            listID,
+            cardID
+        );
+        io.emit('assign member card', { assignedMembers, boardID, listID, cardID });
+    });
+    socket.on('change card title', async ({ boardID, listID, cardID, cardTitle }) => {
+        await ListController.changeCardTitle(boardID, listID, cardID, cardTitle);
+        io.emit('change card title', { boardID, listID, cardID, cardTitle });
+    });
+    socket.on('change card description', async ({ boardID, listID, cardID, description }) => {
+        await ListController.changeCardDescription(boardID, listID, cardID, description);
+        io.emit('change card description', { boardID, listID, cardID, description });
+    });
+    socket.on('delete attachment', async ({ boardID, listID, cardID, attachmentID }) => {
+        await ListController.deleteAttachment(boardID, listID, cardID, attachmentID);
+        io.emit('delete attachment', { boardID, listID, cardID, attachmentID });
+    });
+    socket.on('leave board', async ({ userID, boardID }) => {
+        await BoardController.leaveBoard(userID, boardID);
+        io.emit('leave board', { userID, boardID });
+    });
+    socket.on('delete board', async (boardID) => {
+        await BoardController.deleteBoard(boardID);
+        io.emit('delete board', boardID);
+    });
     console.log('User connected : ' + socket.id);
 });
 
@@ -63,7 +113,9 @@ io.on('connection', (socket) => {
  * Middleware
  */
 app.use('/', cookieParser()); // a voir pour enlever le /
-app.use(cors({ origin: ORIGIN, credentials: true }));
+if (!ON_PRODUCTION) {
+    app.use(cors({ origin: ORIGIN, credentials: true }));
+}
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -75,13 +127,19 @@ app.use(
     express.static(path.join(__dirname, 'assets', 'images', 'board-picture'))
 );
 app.use('/user-picture', express.static(path.join(__dirname, 'assets', 'images', 'user-picture')));
+app.use('/attachment', express.static(path.join(__dirname, 'assets', 'attachments')));
 
 if (ON_PRODUCTION) {
-    app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
+    app.use(express.static(path.join(__dirname, '../client/build')));
     app.get('/*', (_, res) => {
-        res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+        res.sendFile(path.join(__dirname, '../client/build/index.html'));
     });
 }
+//     app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
+//     app.get('/*', (_, res) => {
+//         res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+//     });
+// }
 
 /**
  * Routes

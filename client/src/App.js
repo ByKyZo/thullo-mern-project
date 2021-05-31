@@ -4,6 +4,7 @@ import PageLoader from './components/templates/PageLoader';
 import { useSelector } from 'react-redux';
 import ToastManager from './components/templates/ToastManager';
 import SocketManager from './socket/socketManager';
+import ModalManager from './components/templates/modal/ModalManager';
 
 const App = (props) => {
     const isLoading = useSelector((state) => state.loaderReducer);
@@ -17,6 +18,7 @@ const App = (props) => {
     return (
         <div className="app">
             {isLoading && <PageLoader />}
+            <ModalManager />
             <SocketManager />
             <ToastManager />
             <Router />

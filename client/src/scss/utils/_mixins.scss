@@ -11,7 +11,7 @@
         transition: 0.3s;
         &:focus {
             outline: none;
-            box-shadow: 0 0 0 2px rgb(255, 255, 255), 0 0 0 4px darken($color, 10%);
+            box-shadow: 0 0 0 2px rgb(255, 255, 255), 0 0 0 4px $color;
         }
     }
 }
@@ -36,47 +36,53 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 8px;
     display: flex;
-    // justify-content: center;
     align-items: center;
     padding: 16px;
 }
 
-@mixin buttonHover($color, $text) {
+@mixin buttonHover($color) {
     @include focus($color);
-    background-color: $color;
-    color: $text;
     &::before {
         content: '';
-        height: 100%;
-        width: 100%;
-        background-color: darken($color, 20%);
-        opacity: 0.4;
+        height: 150%;
+        width: 150%;
+        background-color: darken($color, 10%);
+        // background-color: $color;
+        // opacity: 0.6;
         position: absolute;
-        transform: translateX(-100%);
         z-index: -1;
-        transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s;
+        // transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s;
+        transition: ease 0.4s;
+        border-radius: 999999px;
+        transform: scaleY(0);
     }
     &:hover {
         &::before {
-            transform: translateX(0);
+            // transform: translateX(0);
+            transform: scaleY(1);
         }
     }
 }
 
-@mixin button($padding: 'basic', $rounded: 'basic', $type: 'primary', $color: '', $text: '') {
+@mixin button($padding: 'basic', $rounded: 'basic', $type: 'primary', $color: '', $text: white) {
     @include display(flex, unset, center, center);
     cursor: pointer;
     position: relative;
     transition: 0.3s;
     overflow: hidden;
     z-index: 10;
+    user-select: none !important;
 
     @if ($type == 'primary') {
-        @include buttonHover($primary, white) // @include focus($primary);
+        background-color: $primary;
+        color: white;
+        @include buttonHover($primary) // @include focus($primary);
 ;
     }
     @if ($type == 'secondary') {
-        @include buttonHover($neutralLight, $secondary); // @include focus($primary);
+        background-color: $neutralLight;
+        color: $secondary;
+        @include buttonHover($neutralLight); // @include focus($primary);
     }
     @if ($type == 'disabled') {
         @include focus(transparent);
@@ -88,7 +94,19 @@
         }
     }
     @if ($type == 'custom') {
-        @include buttonHover($color, $text);
+        background-color: $color;
+        color: $text;
+        @include buttonHover($color);
+    }
+
+    @if ($type == 'custom-outline') {
+        background-color: transparent;
+        border: 1px solid $color;
+        color: $color;
+        @include buttonHover($color);
+        &:hover {
+            color: $text;
+        }
     }
 
     @if ($rounded == 'basic') {
@@ -129,7 +147,7 @@
     @if ($hasBorderAndShadow == true) {
         @include radius('medium');
         border: 1px solid $borderModal;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
     }
 }
 // FAIRE UNE MARGIN / PADDING PREDEFINI;

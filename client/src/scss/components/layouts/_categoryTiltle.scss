@@ -1,0 +1,12 @@
+.categorytitle {
+    @include display(flex, unset, unset, center);
+    color: $neutralMidDark;
+    margin-right: 18px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+
+    &__icon {
+        margin-right: 8px;
+        display: flex;
+    }
+}

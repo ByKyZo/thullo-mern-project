@@ -1,0 +1,16 @@
+.userdisplay {
+    @include display(flex, unset, flex-start, center);
+    margin: 14px 0 24px 0;
+
+    &__img {
+        @include radius('small');
+        height: 32px;
+        width: 32px;
+        margin-right: 12px;
+    }
+    &__name {
+        font-weight: 600;
+        color: $neutralDark;
+        letter-spacing: -1px;
+    }
+}

@@ -35,7 +35,7 @@ const express_1 = __importDefault(require("express"));
 const http = __importStar(require("http"));
 const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config({ path: path_1.default.join(__dirname, '..', 'config', '.env') });
+dotenv_1.default.config({ path: path_1.default.join(__dirname, '..', 'config', '.env.local') });
 const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
@@ -43,12 +43,12 @@ const board_routes_1 = __importDefault(require("./routes/board.routes"));
 const socket_io_1 = require("socket.io");
 require("./database/database");
 const board_controller_1 = __importDefault(require("./controllers/board.controller"));
+const list_controller_1 = __importDefault(require("./controllers/list.controller"));
 const ON_PRODUCTION = false;
 const app = express_1.default();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
-// const ORIGIN = 'http://c24487f3706e.ngrok.io';
 const io = new socket_io_1.Server(server, {
     cors: {
         origin: ORIGIN,
@@ -79,13 +79,59 @@ io.on('connection', (socket) => {
         yield board_controller_1.default.changeDescription(description, boardID);
         io.emit('change description', { description, boardID });
     }));
+    socket.on('add list', ({ name, boardID, userID }) => __awaiter(void 0, void 0, void 0, function* () {
+        const listCreated = yield list_controller_1.default.addList(name, boardID);
+        io.emit('add list', { listCreated, boardID, userID });
+    }));
+    socket.on('add card', ({ name, boardID, listID, userID }) => __awaiter(void 0, void 0, void 0, function* () {
+        const cardCreated = yield list_controller_1.default.addCard(name, boardID, listID);
+        io.emit('add card', { cardCreated, listID, boardID, userID });
+    }));
+    socket.on('delete list', ({ listID, boardID }) => __awaiter(void 0, void 0, void 0, function* () {
+        yield list_controller_1.default.deleteList(listID, boardID);
+        io.emit('delete list', { listID, boardID });
+    }));
+    socket.on('rename list', ({ rename, listID, boardID }) => __awaiter(void 0, void 0, void 0, function* () {
+        yield list_controller_1.default.renameList(rename, listID, boardID);
+        io.emit('rename list', { rename, listID, boardID });
+    }));
+    socket.on('reorder list', ({ listsReorder, boardID, userID }) => __awaiter(void 0, void 0, void 0, function* () {
+        yield list_controller_1.default.reorderList(listsReorder, boardID);
+        io.emit('reorder list', { listsReorder, boardID, userID });
+    }));
+    socket.on('assign member card', ({ assignedMembersID, boardID, listID, cardID }) => __awaiter(void 0, void 0, void 0, function* () {
+        const assignedMembers = yield list_controller_1.default.assignMember(assignedMembersID, boardID, listID, cardID);
+        io.emit('assign member card', { assignedMembers, boardID, listID, cardID });
+    }));
+    socket.on('change card title', ({ boardID, listID, cardID, cardTitle }) => __awaiter(void 0, void 0, void 0, function* () {
+        yield list_controller_1.default.changeCardTitle(boardID, listID, cardID, cardTitle);
+        io.emit('change card title', { boardID, listID, cardID, cardTitle });
+    }));
+    socket.on('change card description', ({ boardID, listID, cardID, description }) => __awaiter(void 0, void 0, void 0, function* () {
+        yield list_controller_1.default.changeCardDescription(boardID, listID, cardID, description);
+        io.emit('change card description', { boardID, listID, cardID, description });
+    }));
+    socket.on('delete attachment', ({ boardID, listID, cardID, attachmentID }) => __awaiter(void 0, void 0, void 0, function* () {
+        yield list_controller_1.default.deleteAttachment(boardID, listID, cardID, attachmentID);
+        io.emit('delete attachment', { boardID, listID, cardID, attachmentID });
+    }));
+    socket.on('leave board', ({ userID, boardID }) => __awaiter(void 0, void 0, void 0, function* () {
+        yield board_controller_1.default.leaveBoard(userID, boardID);
+        io.emit('leave board', { userID, boardID });
+    }));
+    socket.on('delete board', (boardID) => __awaiter(void 0, void 0, void 0, function* () {
+        yield board_controller_1.default.deleteBoard(boardID);
+        io.emit('delete board', boardID);
+    }));
     console.log('User connected : ' + socket.id);
 });
 /**
  * Middleware
  */
 app.use('/', cookie_parser_1.default()); // a voir pour enlever le /
-app.use(cors_1.default({ origin: ORIGIN, credentials: true }));
+if (!ON_PRODUCTION) {
+    app.use(cors_1.default({ origin: ORIGIN, credentials: true }));
+}
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
 /**
@@ -93,12 +139,18 @@ app.use(express_1.default.json());
  */
 app.use('/board-picture', express_1.default.static(path_1.default.join(__dirname, 'assets', 'images', 'board-picture')));
 app.use('/user-picture', express_1.default.static(path_1.default.join(__dirname, 'assets', 'images', 'user-picture')));
+app.use('/attachment', express_1.default.static(path_1.default.join(__dirname, 'assets', 'attachments')));
 if (ON_PRODUCTION) {
-    app.use(express_1.default.static(path_1.default.join(__dirname, '..', 'client', 'build')));
+    app.use(express_1.default.static(path_1.default.join(__dirname, '../client/build')));
     app.get('/*', (_, res) => {
-        res.sendFile(path_1.default.join(__dirname, '..', 'client', 'build', 'index.html'));
+        res.sendFile(path_1.default.join(__dirname, '../client/build/index.html'));
     });
 }
+//     app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
+//     app.get('/*', (_, res) => {
+//         res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+//     });
+// }
 /**
  * Routes
  */
