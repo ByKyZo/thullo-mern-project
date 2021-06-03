@@ -3,14 +3,6 @@
 -   IMPORTANT FAIRE D'ABORD LES FEATURES INDISPENSABLE (DEMANDER)
 -   ET AMELIORER L'APP ET LES FEATURES A LA FIN !
 
-UPLOAD LE SITE SUR HEROKU JE FINIRAIS LES DERNIERES FEATURES PLUS TARD (et chose a faire etc...)
-PUSH SUR GIT HUB LA NOUVELLE VERSION
-
--   Voir pourquoi on voit le json quand on actualise sur un board (en prod);
--   tester voir si y'a pas d'autre souci
--   Faire un truc propre pour switch le mode production (env)
--   GO METTRE SUR HEROKU !!
-
 -   Features a faire :
 
     -   Gerer les tailles des nom des label

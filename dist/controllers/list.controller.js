@@ -261,7 +261,7 @@ class ListController {
                 lists: { $elemMatch: { _id: listID } },
             }, {
                 $set: {
-                    'lists.$.cards.$[inner]': { picture: picture },
+                    'lists.$.cards.$[inner].picture': picture,
                 },
             }, {
                 arrayFilters: [{ 'inner._id': cardID }],

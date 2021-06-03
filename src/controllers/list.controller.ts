@@ -362,7 +362,7 @@ export default class ListController {
             },
             {
                 $set: {
-                    'lists.$.cards.$[inner]': { picture: picture },
+                    'lists.$.cards.$[inner].picture': picture ,
                 },
             },
             {
