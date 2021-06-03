@@ -36,7 +36,6 @@ const http = __importStar(require("http"));
 const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({ path: path_1.default.join(__dirname, '..', 'config', '.env.local') });
-const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const board_routes_1 = __importDefault(require("./routes/board.routes"));
@@ -50,13 +49,13 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
 // const ORIGIN = 'http://localhost:5000';
-const io = new socket_io_1.Server(server, {
-    cors: {
-        origin: ORIGIN,
-        credentials: true,
-    },
-});
-// const io = new Server(server);
+// const io = new Server(server, {
+//     cors: {
+//         origin: ORIGIN,
+//         credentials: true,
+//     },
+// });
+const io = new socket_io_1.Server(server);
 const routes = [];
 // FAIRE UNE CLASSE SOCKET PROPREMENT
 io.on('connection', (socket) => {
@@ -152,7 +151,7 @@ io.on('connection', (socket) => {
  */
 app.use('/', cookie_parser_1.default());
 app.use(express_1.default.json());
-app.use(cors_1.default({ origin: ORIGIN, credentials: true }));
+// app.use(cors({ origin: ORIGIN, credentials: true }));
 app.use(express_1.default.urlencoded({ extended: true }));
 /**
  * Picture Path

@@ -15,7 +15,6 @@ export const login = (userLogin) => {
         axios
             .post('/user/login', userLogin)
             .then((res) => {
-                console.log(res);
                 const { user, token } = res.data;
                 setRememberMeCookie(token);
                 clearToastByTypes(['danger', 'warning']);

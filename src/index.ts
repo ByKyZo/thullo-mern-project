@@ -21,14 +21,14 @@ const PORT = process.env.PORT || 5000;
 const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
 // const ORIGIN = 'http://localhost:5000';
 
-const io = new Server(server, {
-    cors: {
-        origin: ORIGIN,
-        credentials: true,
-    },
-});
+// const io = new Server(server, {
+//     cors: {
+//         origin: ORIGIN,
+//         credentials: true,
+//     },
+// });
 
-// const io = new Server(server);
+const io = new Server(server);
 
 const routes: Array<CommonRoutesConfig> = [];
 
@@ -144,7 +144,7 @@ io.on('connection', (socket) => {
  */
 app.use('/', cookieParser());
 app.use(express.json());
-app.use(cors({ origin: ORIGIN, credentials: true }));
+// app.use(cors({ origin: ORIGIN, credentials: true }));
 app.use(express.urlencoded({ extended: true }));
 
 /**
