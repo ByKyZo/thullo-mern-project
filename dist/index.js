@@ -49,14 +49,12 @@ const app = express_1.default();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
-// const ORIGIN = 'http://localhost:5000';
 const io = new socket_io_1.Server(server, {
     cors: {
         origin: ORIGIN,
         credentials: true,
     },
 });
-// const io = new Server(server);
 const routes = [];
 // FAIRE UNE CLASSE SOCKET PROPREMENT
 io.on('connection', (socket) => {

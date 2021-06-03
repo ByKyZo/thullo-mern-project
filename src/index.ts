@@ -19,7 +19,6 @@ const app: express.Application = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
-// const ORIGIN = 'http://localhost:5000';
 
 const io = new Server(server, {
     cors: {
@@ -27,8 +26,6 @@ const io = new Server(server, {
         credentials: true,
     },
 });
-
-// const io = new Server(server);
 
 const routes: Array<CommonRoutesConfig> = [];
 
