@@ -1,0 +1,61 @@
+.commentbox {
+    overflow: hidden;
+    @include radius('medium');
+    border: 1px solid rgba($secondary, 0.4);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    padding: 6px;
+
+    &__head {
+        display: flex;
+        align-items: center;
+
+        img {
+            @include radius('small');
+            align-self: flex-start;
+            height: 30px;
+            width: 30px;
+            background-color: $primary;
+        }
+    }
+
+    &-input-wrapper {
+        position: relative;
+        width: 100%;
+
+        &__input {
+            outline: none;
+            word-break: break-all;
+            padding: 6px;
+        }
+        &__placeholder {
+            position: absolute;
+            font-size: 0.9rem;
+            top: 7px;
+            left: 12px;
+            color: rgba($secondary, 0.6);
+            user-select: none;
+            pointer-events: none;
+        }
+    }
+
+    &__toolbar {
+        height: 0;
+        transition: 0.2s;
+        display: flex;
+        justify-content: flex-end;
+        // padding: 6px 0;
+        button {
+            margin: 6px 0;
+            @include button('basic', 'basic');
+            font-size: 0.7rem;
+            // position: absolute;
+            // right: 10px;
+            // bottom: 10px;
+        }
+        // background-color: red;
+        &--open {
+            height: 50px;
+        }
+    }
+}

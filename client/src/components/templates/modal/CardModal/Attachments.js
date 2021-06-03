@@ -10,7 +10,10 @@ import socket from '../../../../utils/socket';
 const Attachments = ({ boardID, listID, cardID, attachments }) => {
     const [attachmentsState, setAttachmentsState] = useState([]);
 
-    useEffect(() => setAttachmentsState(attachments), [attachments]);
+    useEffect(() => {
+        if (isEmpty(attachments)) return;
+        setAttachmentsState(attachments);
+    }, [attachments]);
 
     useEffect(() => {
         socket.on('delete attachment', ({ attachmentID }) => {

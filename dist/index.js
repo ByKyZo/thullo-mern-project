@@ -44,17 +44,19 @@ const socket_io_1 = require("socket.io");
 require("./database/database");
 const board_controller_1 = __importDefault(require("./controllers/board.controller"));
 const list_controller_1 = __importDefault(require("./controllers/list.controller"));
-const ON_PRODUCTION = false;
+const ON_PRODUCTION = true;
 const app = express_1.default();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
+// const ORIGIN = 'http://localhost:5000';
 const io = new socket_io_1.Server(server, {
     cors: {
         origin: ORIGIN,
         credentials: true,
     },
 });
+// const io = new Server(server);
 const routes = [];
 // FAIRE UNE CLASSE SOCKET PROPREMENT
 io.on('connection', (socket) => {
@@ -115,6 +117,26 @@ io.on('connection', (socket) => {
         yield list_controller_1.default.deleteAttachment(boardID, listID, cardID, attachmentID);
         io.emit('delete attachment', { boardID, listID, cardID, attachmentID });
     }));
+    socket.on('card comment', ({ boardID, listID, cardID, userID, message }) => __awaiter(void 0, void 0, void 0, function* () {
+        const comments = yield list_controller_1.default.sendComment(boardID, listID, cardID, userID, message);
+        io.emit('card comment', { boardID, listID, cardID, comments });
+    }));
+    socket.on('card delete comment', ({ boardID, listID, cardID, commentID }) => __awaiter(void 0, void 0, void 0, function* () {
+        const comments = yield list_controller_1.default.deleteComment(boardID, listID, cardID, commentID);
+        io.emit('card delete comment', { boardID, listID, cardID, commentID });
+    }));
+    socket.on('card edit comment', ({ boardID, listID, cardID, commentID, message }) => __awaiter(void 0, void 0, void 0, function* () {
+        const comments = yield list_controller_1.default.editComment(boardID, listID, cardID, commentID, message);
+        io.emit('card edit comment', { boardID, listID, cardID, commentID, message });
+    }));
+    socket.on('card add label', ({ boardID, listID, cardID, labelName, color }) => __awaiter(void 0, void 0, void 0, function* () {
+        const label = yield list_controller_1.default.addLabel(boardID, listID, cardID, labelName, color);
+        io.emit('card add label', { boardID, listID, cardID, label });
+    }));
+    socket.on('card delete label', ({ boardID, listID, cardID, labelID }) => __awaiter(void 0, void 0, void 0, function* () {
+        list_controller_1.default.deleteLabel(boardID, listID, cardID, labelID);
+        io.emit('card delete label', { boardID, listID, cardID, labelID });
+    }));
     socket.on('leave board', ({ userID, boardID }) => __awaiter(void 0, void 0, void 0, function* () {
         yield board_controller_1.default.leaveBoard(userID, boardID);
         io.emit('leave board', { userID, boardID });
@@ -128,34 +150,28 @@ io.on('connection', (socket) => {
 /**
  * Middleware
  */
-app.use('/', cookie_parser_1.default()); // a voir pour enlever le /
-if (!ON_PRODUCTION) {
-    app.use(cors_1.default({ origin: ORIGIN, credentials: true }));
-}
-app.use(express_1.default.urlencoded({ extended: true }));
+app.use('/', cookie_parser_1.default());
 app.use(express_1.default.json());
+app.use(cors_1.default({ origin: ORIGIN, credentials: true }));
+app.use(express_1.default.urlencoded({ extended: true }));
 /**
  * Picture Path
  */
 app.use('/board-picture', express_1.default.static(path_1.default.join(__dirname, 'assets', 'images', 'board-picture')));
 app.use('/user-picture', express_1.default.static(path_1.default.join(__dirname, 'assets', 'images', 'user-picture')));
 app.use('/attachment', express_1.default.static(path_1.default.join(__dirname, 'assets', 'attachments')));
-if (ON_PRODUCTION) {
-    app.use(express_1.default.static(path_1.default.join(__dirname, '../client/build')));
-    app.get('/*', (_, res) => {
-        res.sendFile(path_1.default.join(__dirname, '../client/build/index.html'));
-    });
-}
-//     app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
-//     app.get('/*', (_, res) => {
-//         res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
-//     });
-// }
 /**
  * Routes
  */
 routes.push(new user_routes_1.default(app));
 routes.push(new board_routes_1.default(app));
+if (ON_PRODUCTION) {
+    app.use(express_1.default.static(path_1.default.join(__dirname, '..', 'client', 'build')));
+    app.use('*', express_1.default.static(path_1.default.join(__dirname, '..', 'client', 'build'))); // Added this
+    app.get('*', (req, res) => {
+        res.sendFile(path_1.default.join(__dirname, '..', 'client', 'build', 'index.html'));
+    });
+}
 server.listen(PORT, () => {
     console.log(`Listening on PORT ${PORT}`);
 });

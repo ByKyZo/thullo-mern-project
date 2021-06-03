@@ -35,7 +35,7 @@ export class UserController {
 
     public static async login(req: Request, res: Response) {
         const { email, password } = req.body;
-
+        console.log('LOGIN');
         UserModel.findOne({ email }, async (err: any, docs: MongooseDocument) => {
             try {
                 if (err || !docs || !email || !password)

@@ -134,12 +134,24 @@ export const cutMongooseTimestampInDate = (mongooseTimestamp) => {
         'November',
         'December',
     ];
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
     const noFormatDate = mongooseTimestamp;
+
+    //  YEAR
     const years = noFormatDate.substring(0, 4);
+
+    //  MONTH
     const monthNum =
         noFormatDate[5] === '0' ? noFormatDate.substring(6, 7) : noFormatDate.substring(5, 7);
     const monthLetter = month[monthNum - 1];
-    const dayNum = noFormatDate.substring(8, 10);
 
-    return { dayNum, monthLetter, monthNum, years };
+    //  DAY
+    const dayNum = noFormatDate.substring(8, 10);
+    const dayLetter = days[dayNum];
+
+    // HOUR
+    const hour = noFormatDate.substring(11, 16);
+
+    return { hour, dayNum, dayLetter, monthNum, monthLetter, years };
 };

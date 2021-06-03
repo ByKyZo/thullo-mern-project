@@ -49,6 +49,7 @@ class UserController {
     static login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, password } = req.body;
+            console.log('LOGIN');
             user_model_1.default.findOne({ email }, (err, docs) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     if (err || !docs || !email || !password)

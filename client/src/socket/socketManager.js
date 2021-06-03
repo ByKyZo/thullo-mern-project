@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import {
     addCard,
+    addCardLabel,
     addList,
     assignMemberToCard,
     banMember,
@@ -10,6 +11,7 @@ import {
     changeDescription,
     changeState,
     deleteBoard,
+    deleteCardLabel,
     deleteList,
     joinBoard,
     leaveBoard,
@@ -74,6 +76,12 @@ const SocketManager = (props) => {
         });
         socket.on('change card description', ({ boardID, listID, cardID, description }) => {
             dispatchCallback(changeCardDescription(boardID, listID, cardID, description));
+        });
+        socket.on('card add label', ({ boardID, listID, cardID, label }) => {
+            dispatchCallback(addCardLabel(boardID, listID, cardID, label));
+        });
+        socket.on('card delete label', ({ boardID, listID, cardID, labelID }) => {
+            dispatchCallback(deleteCardLabel(boardID, listID, cardID, labelID));
         });
         socket.on('leave board', ({ userID, boardID }) => {
             console.log('leave board scktio');

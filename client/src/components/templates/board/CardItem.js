@@ -7,6 +7,7 @@ import { CARD_MODAL } from '../modal/ModalManager';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../redux/actions/modal.action';
 import { getPicturePath } from '../../../utils/utils';
+import CardLabel from './CardLabel';
 
 const CardItem = ({ _id, title, picture, labels, members, attachments, listID, listName }) => {
     const dispatch = useDispatch();
@@ -20,10 +21,18 @@ const CardItem = ({ _id, title, picture, labels, members, attachments, listID, l
                 }}>
                 {picture && <div className="card__image"></div>}
                 <span className="card__title">{title}</span>
-                <ul className="card__category">
-                    <li className="card__category__item">Design</li>
-                    <li className="card__category__item">Concept</li>
-                </ul>
+                <div className="card__category">
+                    {labels.map((label) => {
+                        return (
+                            <CardLabel
+                                key={label._id}
+                                style={{ marginBottom: '8px' }}
+                                name={label.name}
+                                color={label.color}
+                            />
+                        );
+                    })}
+                </div>
                 <div className="card__bottom">
                     <ul className="card__bottom__members">
                         {members.map((member, index) => {

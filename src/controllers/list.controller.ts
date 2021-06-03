@@ -79,11 +79,18 @@ export default class ListController {
         const cardID = req.params.id;
         const { boardID, listID } = req.body;
 
-        const card = await Utils.toObject(
+        const card: ICard = await Utils.toObject(
             await ListController.getCardFromDB(boardID, listID, cardID)
         );
 
         const assignedMember = await BoardController.GetUsersByID(card.members);
+
+        const commentsUsersID: string[] = await card.comments.map((comment) => comment.userID);
+        const commentsUsers: IUser[] = await BoardController.GetUsersByID(commentsUsersID);
+
+        for (let i = 0; i < card.comments.length; i++) {
+            card.comments[i].user = await commentsUsers[i];
+        }
 
         card.members = assignedMember;
 
@@ -201,5 +208,142 @@ export default class ListController {
                 arrayFilters: [{ 'inner._id': cardID }],
             }
         );
+    }
+
+    public static async sendComment(
+        boardID: string,
+        listID: string,
+        cardID: string,
+        userID: string,
+        message: string
+    ) {
+        await boardModels.updateOne(
+            {
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            },
+            {
+                $push: {
+                    'lists.$.cards.$[inner].comments': {
+                        userID,
+                        message,
+                        createdAt: Date.now(),
+                    },
+                },
+            },
+            {
+                arrayFilters: [{ 'inner._id': cardID }],
+            }
+        );
+        const card = await ListController.getCardFromDB(boardID, listID, cardID);
+
+        const cardUser = await BoardController.GetUsersByID([userID]);
+
+        const comments = card.comments[card.comments.length - 1];
+
+        comments.user = cardUser[0];
+
+        return comments;
+    }
+
+    public static async deleteComment(
+        boardID: string,
+        listID: string,
+        cardID: string,
+        commentID: string
+    ) {
+        await boardModels.updateOne(
+            {
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            },
+            {
+                $pull: {
+                    'lists.$.cards.$[inner].comments': {
+                        _id: commentID,
+                    },
+                },
+            },
+            {
+                arrayFilters: [{ 'inner._id': cardID }],
+            }
+        );
+    }
+
+    public static async editComment(
+        boardID: string,
+        listID: string,
+        cardID: string,
+        commentID: string,
+        message: string
+    ) {
+        await boardModels.updateOne(
+            {
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            },
+            {
+                $set: {
+                    'lists.$.cards.$[inner].comments.$[innerComment].message': message,
+                },
+            },
+            {
+                arrayFilters: [{ 'inner._id': cardID }, { 'innerComment._id': commentID }],
+            }
+        );
+    }
+
+    public static async addLabel(
+        boardID: string,
+        listID: string,
+        cardID: string,
+        labelName: string,
+        color: string
+    ) {
+        await boardModels.updateOne(
+            {
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            },
+            {
+                $push: {
+                    'lists.$.cards.$[inner].labels': { name: labelName, color },
+                },
+            },
+            {
+                arrayFilters: [{ 'inner._id': cardID }],
+            }
+        );
+
+        const card = await ListController.getCardFromDB(boardID, listID, cardID);
+
+        return card.labels[card.labels.length - 1];
+    }
+    public static async deleteLabel(
+        boardID: string,
+        listID: string,
+        cardID: string,
+        labelID: string
+    ) {
+        console.log(labelID);
+
+        await boardModels.updateOne(
+            {
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            },
+            {
+                $pull: {
+                    'lists.$.cards.$[inner].labels': { _id: labelID },
+                },
+            },
+            {
+                arrayFilters: [{ 'inner._id': cardID }],
+            }
+        );
+
+        const card = await ListController.getCardFromDB(boardID, listID, cardID);
+
+        return card.labels[card.labels.length - 1];
     }
 }

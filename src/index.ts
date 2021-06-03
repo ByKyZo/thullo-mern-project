@@ -13,18 +13,22 @@ import './database/database';
 import BoardController from './controllers/board.controller';
 import ListController from './controllers/list.controller';
 
-const ON_PRODUCTION = false;
+const ON_PRODUCTION = true;
 
 const app: express.Application = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
+// const ORIGIN = 'http://localhost:5000';
+
 const io = new Server(server, {
     cors: {
         origin: ORIGIN,
         credentials: true,
     },
 });
+
+// const io = new Server(server);
 
 const routes: Array<CommonRoutesConfig> = [];
 
@@ -98,6 +102,32 @@ io.on('connection', (socket) => {
         await ListController.deleteAttachment(boardID, listID, cardID, attachmentID);
         io.emit('delete attachment', { boardID, listID, cardID, attachmentID });
     });
+    socket.on('card comment', async ({ boardID, listID, cardID, userID, message }) => {
+        const comments = await ListController.sendComment(boardID, listID, cardID, userID, message);
+        io.emit('card comment', { boardID, listID, cardID, comments });
+    });
+    socket.on('card delete comment', async ({ boardID, listID, cardID, commentID }) => {
+        const comments = await ListController.deleteComment(boardID, listID, cardID, commentID);
+        io.emit('card delete comment', { boardID, listID, cardID, commentID });
+    });
+    socket.on('card edit comment', async ({ boardID, listID, cardID, commentID, message }) => {
+        const comments = await ListController.editComment(
+            boardID,
+            listID,
+            cardID,
+            commentID,
+            message
+        );
+        io.emit('card edit comment', { boardID, listID, cardID, commentID, message });
+    });
+    socket.on('card add label', async ({ boardID, listID, cardID, labelName, color }) => {
+        const label = await ListController.addLabel(boardID, listID, cardID, labelName, color);
+        io.emit('card add label', { boardID, listID, cardID, label });
+    });
+    socket.on('card delete label', async ({ boardID, listID, cardID, labelID }) => {
+        ListController.deleteLabel(boardID, listID, cardID, labelID);
+        io.emit('card delete label', { boardID, listID, cardID, labelID });
+    });
     socket.on('leave board', async ({ userID, boardID }) => {
         await BoardController.leaveBoard(userID, boardID);
         io.emit('leave board', { userID, boardID });
@@ -112,12 +142,10 @@ io.on('connection', (socket) => {
 /**
  * Middleware
  */
-app.use('/', cookieParser()); // a voir pour enlever le /
-if (!ON_PRODUCTION) {
-    app.use(cors({ origin: ORIGIN, credentials: true }));
-}
-app.use(express.urlencoded({ extended: true }));
+app.use('/', cookieParser());
 app.use(express.json());
+app.use(cors({ origin: ORIGIN, credentials: true }));
+app.use(express.urlencoded({ extended: true }));
 
 /**
  * Picture Path
@@ -129,23 +157,19 @@ app.use(
 app.use('/user-picture', express.static(path.join(__dirname, 'assets', 'images', 'user-picture')));
 app.use('/attachment', express.static(path.join(__dirname, 'assets', 'attachments')));
 
-if (ON_PRODUCTION) {
-    app.use(express.static(path.join(__dirname, '../client/build')));
-    app.get('/*', (_, res) => {
-        res.sendFile(path.join(__dirname, '../client/build/index.html'));
-    });
-}
-//     app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
-//     app.get('/*', (_, res) => {
-//         res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
-//     });
-// }
-
 /**
  * Routes
  */
 routes.push(new UserRoutes(app));
 routes.push(new BoardRoutes(app));
+
+if (ON_PRODUCTION) {
+    app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
+    app.use('*', express.static(path.join(__dirname, '..', 'client', 'build'))); // Added this
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+    });
+}
 
 server.listen(PORT, () => {
     console.log(`Listening on PORT ${PORT}`);

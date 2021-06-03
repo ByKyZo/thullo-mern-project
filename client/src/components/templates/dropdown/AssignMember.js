@@ -16,7 +16,10 @@ const AssignMember = ({ isOpen, setIsOpen, cardMembers, cardID, listID }) => {
     const [userSearch, setUserSearch] = useState([]);
     const [searchValue, setSearchValue] = useState('');
 
-    useEffect(() => setMembers(cardMembers.map((member) => member._id)), [cardMembers]);
+    useEffect(() =>{
+        if (isEmpty(cardMembers)) return;
+        setMembers(cardMembers.map((member) => member._id))
+    }, [cardMembers]);
 
     useEffect(() => {
         if (!isEmpty(currentBoard)) {

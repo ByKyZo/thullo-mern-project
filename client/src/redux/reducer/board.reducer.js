@@ -18,6 +18,8 @@ import {
     ASSIGN_MEMBER,
     CHANGE_CARD_TITLE,
     CHANGE_CARD_DESCRIPTION,
+    ADD_CARD_LABEL,
+    DELETE_CARD_LABEL,
 } from '../actions/board.action';
 
 const initialState = {
@@ -28,10 +30,15 @@ const initialState = {
 export default function boardReducer(state = initialState, action) {
     switch (action.type) {
         case CREATE_BOARD:
-            return { ...state, boards: [...state.boards, action.payload] };
+            const boards = state.boards ? [...state.boards, action.payload] : [action.payload];
+            // const boards = [action.payload];
+            // return { ...state };
+            // return { ...state, boards: [...state.boards, action.payload] };
+            return { ...state, boards: boards };
         case GET_ALL_BOARD_BY_USERID:
             return { ...state, boards: action.payload };
         case GET_BOARD:
+            // return { ...state };
             return { ...state, currentBoard: action.payload };
         case CLEAN_CURRENTBOARD:
             return { ...state, currentBoard: {} };
@@ -230,6 +237,7 @@ export default function boardReducer(state = initialState, action) {
                         if (list._id === action.payload.listID) {
                             list.cards.forEach((card) => {
                                 if (card._id === action.payload.cardID) {
+                                    console.log('CHANGE CARD TOTITLE');
                                     card.title = action.payload.cardTitle;
                                 }
                             });
@@ -250,6 +258,46 @@ export default function boardReducer(state = initialState, action) {
                             list.cards.forEach((card) => {
                                 if (card._id === action.payload.cardID) {
                                     card.description = action.payload.description;
+                                }
+                            });
+                        }
+                        return list;
+                    }),
+                },
+            };
+        case ADD_CARD_LABEL:
+            if (state.currentBoard._id !== action.payload.boardID) return { ...state };
+
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    lists: state.currentBoard.lists.map((list) => {
+                        if (list._id === action.payload.listID) {
+                            list.cards.forEach((card) => {
+                                if (card._id === action.payload.cardID) {
+                                    card.labels.push(action.payload.label);
+                                }
+                            });
+                        }
+                        return list;
+                    }),
+                },
+            };
+        case DELETE_CARD_LABEL:
+            if (state.currentBoard._id !== action.payload.boardID) return { ...state };
+
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    lists: state.currentBoard.lists.map((list) => {
+                        if (list._id === action.payload.listID) {
+                            list.cards.forEach((card) => {
+                                if (card._id === action.payload.cardID) {
+                                    card.labels = card.labels.filter(
+                                        (label) => label._id !== action.payload.labelID
+                                    );
                                 }
                             });
                         }

@@ -45,6 +45,7 @@ export interface ICard extends mongoose.Document {
         {
             userID: string;
             message: string;
+            user: IUser;
         }
     ];
 }
@@ -124,7 +125,7 @@ const BoardSchema = new Schema(
                                 },
                             },
                         ],
-                        comment: [
+                        comments: [
                             {
                                 userID: {
                                     type: String,
@@ -132,8 +133,10 @@ const BoardSchema = new Schema(
                                 message: {
                                     type: String,
                                 },
+                                createdAt: {
+                                    type: Date,
+                                },
                             },
-                            { timestamps: true },
                         ],
                     },
                 ],

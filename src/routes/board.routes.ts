@@ -3,6 +3,8 @@ import BoardController from '../controllers/board.controller';
 import { Application } from 'express';
 import multer from 'multer';
 import ListController from '../controllers/list.controller';
+import express from 'express';
+import path from 'node:path';
 
 const upload = multer();
 

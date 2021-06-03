@@ -5,13 +5,18 @@ import UserModel from '../models/user.model';
 import ErrorManager from '../utils/ErrorManager';
 import FileManager from '../utils/FileManager';
 import Utils from '../utils/utils';
-import { IBoard, ICard, IList } from '../models/board.models';
+import boardModels, { IBoard, ICard, IList } from '../models/board.models';
 import { IUser } from '../models/user.model';
 import ListController from './list.controller';
 
 export default class BoardController {
     public static async GetUsersByID(usersID: string[] | IUser[]): Promise<IUser[]> {
-        return await UserModel.find({ _id: { $in: usersID } }).select('pseudo picture');
+        const users: IUser[] = [];
+        for (let userID of usersID) {
+            users.push((await UserModel.findById(userID).select('pseudo picture')) as IUser);
+        }
+        return users;
+        // return await UserModel.find({ _id: { $in: usersID } });
     }
 
     public static async create(req: Request, res: Response) {
@@ -45,10 +50,13 @@ export default class BoardController {
             // replace id by owner details
             board.members[0] = await ownerDetails;
 
-            await UserModel.findByIdAndUpdate(board.owner, { $addToSet: { boards: board._id } });
+            const test = await UserModel.findByIdAndUpdate(board.owner, {
+                $addToSet: { boards: board._id },
+            });
 
             res.status(200).send(board);
         } catch (err) {
+            console.log('ERROR CREATE BOARD');
             const errors = ErrorManager.checkErrors(
                 ['MAX_SIZE', 'INVALID_TYPE', 'MISSING_NAME', 'INVALID_USER_ID', 'NAME_MAX_LENGTH'],
                 err
@@ -58,6 +66,8 @@ export default class BoardController {
         }
     }
     public static async getAllBoardsByUserID(req: Request, res: Response) {
+        console.log('getAllBoardsByUserID');
+
         const userID = req.params.id;
 
         const userBoards = Utils.toObject(await UserModel.findById(userID).select('boards -_id'));
@@ -76,22 +86,27 @@ export default class BoardController {
         res.status(200).send(boards);
     }
     public static async getBoard(req: Request, res: Response) {
+        // res.send({ name: 'toto' });
         try {
             const userToken: string = req.cookies.token;
+
             if (!userToken) throw Error('NO_TOKEN : Error token unknown');
             const id = req.params.id;
+
             if (!isValidObjectId(id)) throw Error('INVALID_ID : Board id invalid');
             const userID: any = await (await Utils.checkToken(userToken)).userID;
 
-            BoardModel.findById(id, async (err: any, docs: MongooseDocument) => {
+            await BoardModel.findById(id, async (err: any, docs: MongooseDocument) => {
                 try {
                     if (Utils.isEmpty(docs)) throw Error('BOARD_UNKNOWN : Error board unknown');
                     const board: IBoard = await docs.toObject();
+                    console.log('PASSING EMPTY DOCS GET BOARD');
 
                     if (board.isPrivate) {
                         if (!board.members.includes(userID))
                             throw Error('PRIVATE_BOARD : Error board is private');
                     }
+
                     const members = await UserModel.find({
                         _id: { $in: board.members },
                     }).select('picture pseudo');
@@ -107,6 +122,7 @@ export default class BoardController {
                             board.lists[i].cards[j].members = cardMembers;
                         }
                     }
+                    console.log('GET BOARD');
 
                     board.members = members;
 
@@ -114,6 +130,7 @@ export default class BoardController {
 
                     res.status(200).send(board);
                 } catch (err) {
+                    console.log('ERROR GET BOARD');
                     const errors = ErrorManager.checkErrors(
                         ['BOARD_UNKNOWN', 'PRIVATE_BOARD'],
                         err
@@ -124,7 +141,7 @@ export default class BoardController {
             });
         } catch (err) {
             const errors = ErrorManager.checkErrors(['BOARD_UNKNOWN', 'INVALID_ID'], err);
-            console.log(errors);
+            console.log(err);
             res.sendStatus(500);
         }
     }

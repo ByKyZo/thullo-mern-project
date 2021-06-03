@@ -16,6 +16,7 @@
     width: 100%;
     box-sizing: border-box;
     transition: 0.3s;
+    overflow: hidden;
 
     &__image {
         @include radius('medium');
@@ -36,15 +37,13 @@
     &__category {
         list-style: none;
         display: flex;
+        flex-wrap: wrap;
+        // display: grid;
+        // grid-auto-columns: min-content;
+
+        // grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+        // flex-wrap: wrap;
         margin-bottom: 20px;
-        &__item {
-            font-size: 0.8rem;
-            border-radius: 9999px;
-            padding: 4px 10px;
-            background-color: rgba(58, 32, 129, 0.3);
-            color: rgb(58, 32, 129);
-            margin-right: 12px;
-        }
     }
 
     &__bottom {

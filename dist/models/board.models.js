@@ -79,7 +79,7 @@ const BoardSchema = new mongoose_2.Schema({
                             },
                         },
                     ],
-                    comment: [
+                    comments: [
                         {
                             userID: {
                                 type: String,
@@ -87,8 +87,10 @@ const BoardSchema = new mongoose_2.Schema({
                             message: {
                                 type: String,
                             },
+                            createdAt: {
+                                type: Date,
+                            },
                         },
-                        { timestamps: true },
                     ],
                 },
             ],

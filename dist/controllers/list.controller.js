@@ -79,6 +79,11 @@ class ListController {
             const { boardID, listID } = req.body;
             const card = yield utils_1.default.toObject(yield ListController.getCardFromDB(boardID, listID, cardID));
             const assignedMember = yield board_controller_1.default.GetUsersByID(card.members);
+            const commentsUsersID = yield card.comments.map((comment) => comment.userID);
+            const commentsUsers = yield board_controller_1.default.GetUsersByID(commentsUsersID);
+            for (let i = 0; i < card.comments.length; i++) {
+                card.comments[i].user = yield commentsUsers[i];
+            }
             card.members = assignedMember;
             res.status(200).send(card);
         });
@@ -160,6 +165,92 @@ class ListController {
             }, {
                 arrayFilters: [{ 'inner._id': cardID }],
             });
+        });
+    }
+    static sendComment(boardID, listID, cardID, userID, message) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield board_models_1.default.updateOne({
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            }, {
+                $push: {
+                    'lists.$.cards.$[inner].comments': {
+                        userID,
+                        message,
+                        createdAt: Date.now(),
+                    },
+                },
+            }, {
+                arrayFilters: [{ 'inner._id': cardID }],
+            });
+            const card = yield ListController.getCardFromDB(boardID, listID, cardID);
+            const cardUser = yield board_controller_1.default.GetUsersByID([userID]);
+            const comments = card.comments[card.comments.length - 1];
+            comments.user = cardUser[0];
+            return comments;
+        });
+    }
+    static deleteComment(boardID, listID, cardID, commentID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield board_models_1.default.updateOne({
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            }, {
+                $pull: {
+                    'lists.$.cards.$[inner].comments': {
+                        _id: commentID,
+                    },
+                },
+            }, {
+                arrayFilters: [{ 'inner._id': cardID }],
+            });
+        });
+    }
+    static editComment(boardID, listID, cardID, commentID, message) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield board_models_1.default.updateOne({
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            }, {
+                $set: {
+                    'lists.$.cards.$[inner].comments.$[innerComment].message': message,
+                },
+            }, {
+                arrayFilters: [{ 'inner._id': cardID }, { 'innerComment._id': commentID }],
+            });
+        });
+    }
+    static addLabel(boardID, listID, cardID, labelName, color) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield board_models_1.default.updateOne({
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            }, {
+                $push: {
+                    'lists.$.cards.$[inner].labels': { name: labelName, color },
+                },
+            }, {
+                arrayFilters: [{ 'inner._id': cardID }],
+            });
+            const card = yield ListController.getCardFromDB(boardID, listID, cardID);
+            return card.labels[card.labels.length - 1];
+        });
+    }
+    static deleteLabel(boardID, listID, cardID, labelID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(labelID);
+            yield board_models_1.default.updateOne({
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            }, {
+                $pull: {
+                    'lists.$.cards.$[inner].labels': { _id: labelID },
+                },
+            }, {
+                arrayFilters: [{ 'inner._id': cardID }],
+            });
+            const card = yield ListController.getCardFromDB(boardID, listID, cardID);
+            return card.labels[card.labels.length - 1];
         });
     }
 }

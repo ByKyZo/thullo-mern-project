@@ -87,6 +87,7 @@
         padding: 0 10px;
         min-height: 1px;
         position: relative;
+        overflow-x: hidden;
 
         &::-webkit-scrollbar {
             border-radius: 6px;

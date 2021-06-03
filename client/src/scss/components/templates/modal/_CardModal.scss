@@ -1,5 +1,6 @@
 .cardmodal {
-    max-width: 660px;
+    width: 660px;
+    min-height: 400px;
 
     &__head {
         margin-bottom: 16px;
@@ -7,6 +8,7 @@
         height: 130px;
         width: 100%;
         background-color: $primary;
+
         &__img {
         }
     }
@@ -153,6 +155,7 @@
                     margin-bottom: 30px;
 
                     &__profil {
+                        @include radius('small');
                         position: absolute;
                         height: 30px;
                         width: 30px;
@@ -162,6 +165,7 @@
                     }
 
                     &__input {
+                        outline: none;
                         padding-top: 9px;
                         padding-left: 7px;
                         min-height: 55px;
@@ -188,8 +192,36 @@
                 }
                 &__list {
                     list-style: none;
+                    position: relative;
 
                     &__item {
+                        &__edit-comment-wrapper {
+                            // background-color: red;
+
+                            &__input {
+                                border: 1px solid rgba($secondary, 0.2);
+                                margin-bottom: 8px;
+                                padding: 6px;
+                            }
+
+                            &__btn-save {
+                                @include button('basic', 'basic');
+                                // display: inline-block;
+                                margin: 0;
+                                font-size: 0.7rem;
+                                margin-right: 6px;
+                            }
+
+                            &__btn-cancel {
+                                background-color: transparent;
+                                font-size: 0.8rem;
+                            }
+                        }
+
+                        &__comment {
+                            word-break: break-word;
+                        }
+
                         &__head {
                             display: flex;
                             margin-bottom: 12px;
@@ -213,10 +245,19 @@
                             }
                             &__btn-wrapper {
                                 margin-left: auto;
+                                user-select: none;
 
                                 &__edit {
+                                    background: transparent;
+                                    color: $secondary;
+                                    font-size: 0.9rem;
+                                    cursor: pointer;
+                                    &:hover {
+                                        color: $primary;
+                                    }
                                 }
                                 &__delete {
+                                    @extend .cardmodal__content__left__comment__list__item__head__btn-wrapper__edit;
                                 }
                             }
                         }
@@ -225,9 +266,7 @@
             }
         }
         &__right {
-            // width: 148px;
             width: 22%;
-            // flex-shrink: 0;
             @media (max-width: 540px) {
                 @include display(flex, column, flex-start, flex-end);
                 width: auto;
@@ -236,7 +275,7 @@
             &__btn {
                 @include button('basic', 'basic', 'secondary');
                 @include display(flex, unset, flex-start, center);
-                margin-bottom: 8px;
+                margin-bottom: 12px;
                 width: 100%;
                 @media (max-width: 540px) {
                     width: auto;

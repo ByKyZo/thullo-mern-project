@@ -3,21 +3,28 @@
 -   IMPORTANT FAIRE D'ABORD LES FEATURES INDISPENSABLE (DEMANDER)
 -   ET AMELIORER L'APP ET LES FEATURES A LA FIN !
 
+UPLOAD LE SITE SUR HEROKU JE FINIRAIS LES DERNIERES FEATURES PLUS TARD (et chose a faire etc...)
+PUSH SUR GIT HUB LA NOUVELLE VERSION
+
+-   Voir pourquoi on voit le json quand on actualise sur un board (en prod);
+-   tester voir si y'a pas d'autre souci
+-   Faire un truc propre pour switch le mode production (env)
+-   GO METTRE SUR HEROKU !!
+
 -   Features a faire :
 
-    -   Delete le file (socket io ?)
-    -   FAIRE UN PUSH GIT HUB APRES LE DELETE FILE
+    -   Gerer les tailles des nom des label
+    -   Créer un composant pour Upload une image (avec API unSplash) le mettre pour crée un board aussi ;
+    -   Faire le modal responsive
 
-    -   Rajouter le dispatch socket pour change card title
-    -   Faire les commentaires
-    -   Faire les labels
-    -   Upload une image (avec API unSplash);
-
+-   Gerer les probleme React d'async cleanup
 -   Reajuster le scss pour faire un truc propre (mais si ça ne correspond pas exactement au figma) (card modal en premier)
+-   Delete une card
 
 -   Voir pourquoi la derniere liste ne se supprime pas sur le front
 -   Rendre le drag scroll plus rapide (la factoriser un max pour le fun :)
 -   Enlever le overflow-y : auto sur list-content permet de suivre le scroll horizontal
+-   Voir pourquoi le placeholder est buggé quand il y'a plein de label
 
 -   Voir pour regler bug graphique dropdown
 -   Appeller l'api unsplash pour les images
@@ -25,7 +32,9 @@
 
 ---
 
--   FAIRE LES CHOSES PROPREMENT AVANT DE COMMENCER LES LISTS
+---
+
+---
 
 ---
 

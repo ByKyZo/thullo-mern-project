@@ -22,17 +22,21 @@ export const REORDER_CARD = 'REORDER_CARD';
 export const ASSIGN_MEMBER = 'ASSIGN_MEMBER';
 export const CHANGE_CARD_TITLE = 'CHANGE_CARD_TITLE';
 export const CHANGE_CARD_DESCRIPTION = 'CHANGE_CARD_DESCRIPTION';
+export const ADD_CARD_LABEL = 'ADD_CARD_LABEL';
+export const DELETE_CARD_LABEL = 'DELETE_CARD_LABEL';
 
 export const createBoard = (data) => {
     return (dispatch) => {
-        return axios
+        axios
             .post('/board/create', data)
             .then((res) => {
                 const board = res.data;
-                dispatch({ type: CREATE_BOARD, payload: board });
+                console.log(board);
                 successToast(`Board ${board.name} create !`);
+                return dispatch({ type: CREATE_BOARD, payload: board });
             })
             .catch((err) => {
+                console.log(err);
                 const errors = err.response.data;
                 errorsManager(errors);
             });
@@ -54,18 +58,18 @@ export const getAllBoardByUserID = (userID) => {
 };
 
 export const getBoard = (boardID) => {
-    return async (dispatch) => {
+    return (dispatch) => {
         dispatch(loading());
-        return axios
+        axios
             .get(`/board/${boardID}`, { withCredentials: true })
             .then((res) => {
                 const boards = res.data;
+                console.log(boards);
                 dispatch({ type: GET_BOARD, payload: boards });
             })
             .catch((err) => {
                 const errors = err.response.data;
                 errorsManager(errors);
-                console.log('board id error');
                 dispatch({ type: GET_BOARD, payload: 'BOARD_ERROR' });
             })
             .finally(() => {
@@ -179,14 +183,26 @@ export const changeCardTitle = (boardID, listID, cardID, cardTitle) => {
 
 export const changeCardDescription = (boardID, listID, cardID, description) => {
     return async (dispatch) => {
-        console.log(boardID);
-        console.log(listID);
-        console.log(cardID);
-        console.log(description);
-
         return dispatch({
             type: CHANGE_CARD_DESCRIPTION,
             payload: { boardID, listID, cardID, description },
+        });
+    };
+};
+export const addCardLabel = (boardID, listID, cardID, label) => {
+    return async (dispatch) => {
+        return dispatch({
+            type: ADD_CARD_LABEL,
+            payload: { boardID, listID, cardID, label },
+        });
+    };
+};
+
+export const deleteCardLabel = (boardID, listID, cardID, labelID) => {
+    return async (dispatch) => {
+        return dispatch({
+            type: DELETE_CARD_LABEL,
+            payload: { boardID, listID, cardID, labelID },
         });
     };
 };

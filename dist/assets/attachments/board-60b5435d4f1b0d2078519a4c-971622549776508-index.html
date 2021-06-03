@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+    <title>Frontend Mentor | Todo app</title>
+
+    <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .attribution { font-size: 11px; text-align: center; width: 100%;position: absolute; bottom: 5px; color: #544c6d;transform: translateX(-50%);left: 50%;}
+        .attribution a { color: hsl(228, 45%, 44%); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="app" id="app">
+            <!-- APP HEADER -->
+            <div class="app__header">
+
+                <h1 class="app__header__title">TODO</h1> 
+
+                <!-- THEME SOMBRE / CLAIR -->
+                <div class="app__header__theme">
+                    <img src="images/icon-sun.svg" alt="" id="theme" class="light">
+                    <!-- <img src="images/icon-moon.svg" alt="" class="theme dark-theme d-none"> -->
+                </div>
+
+            </div>
+            <!-- END APP HEADER -->
+
+            <!-- APP ADD-->
+            <div class="app__addTodo">
+
+                <input type="checkbox" id="todoAdd" hidden/>
+                <label for="todoAdd" class="customCheckbox"></label>
+                
+                <input id="todoName" type="text" placeholder="Create new todo...">
+
+            </div>
+            <!-- END APP ADD-->
+
+            <!-- APP TODO LIST-->
+            <div class="app__content">
+
+                <div id="todoList" class="app__content__todo sort1"> <!-- sort1 -->
+                    <ul id="sortlist">
+
+                        <li class="newTodo uncompleted" draggable="true">
+                                <input type="checkbox" id="check1" class="checkbox" hidden>
+                                <label for="check1" class="customCheckbox"></label>
+
+                                <span>Complete online Javascript course</span>
+
+                
+                                <img src="./images/icon-cross.svg" alt="" class="deleteTodo">
+                        </li>
+
+                        <li class="newTodo uncompleted" draggable="true">
+
+                                <input type="checkbox" id="check2" class="checkbox" hidden>
+                                <label for="check2" class="customCheckbox"></label>
+
+                                <span>Jog around the park 3x</span>
+
+                
+                                <img src="./images/icon-cross.svg" alt="" class="deleteTodo">
+                        </li>
+
+                        <li class="newTodo uncompleted" draggable="true">
+                                <input type="checkbox" id="check3" class="checkbox" hidden>
+                                <label for="check3" class="customCheckbox"></label>
+
+                                <span>10 minutes meditation</span>
+
+                
+                                <img src="./images/icon-cross.svg" alt="" class="deleteTodo">
+                        </li>
+
+                        <li class="newTodo uncompleted" draggable="true">
+                                <input type="checkbox" id="check4" class="checkbox" hidden>
+                                <label for="check4" class="customCheckbox"></label>
+
+                                <span>Read for 1 hour</span>
+
+                                <img src="./images/icon-cross.svg" alt="" class="deleteTodo">
+                        </li>
+
+                        <li class="newTodo uncompleted" draggable="true">
+                                <input type="checkbox" id="check5" class="checkbox" hidden>
+                                <label for="check5" class="customCheckbox"></label>
+
+                                <span>Pick up groceries</span>
+
+                                <img src="./images/icon-cross.svg" alt="" class="deleteTodo">
+                        </li>       
+
+                        <li class="newTodo uncompleted" draggable="true">
+                                <input type="checkbox" id="check6" class="checkbox" hidden>
+                                <label for="check6" class="customCheckbox"></label>
+
+                                <span>Complete Todo App on Frontend Mentor</span>
+
+                                <img src="./images/icon-cross.svg" alt="" class="deleteTodo">
+                        </li>
+
+                    </ul>
+                </div>
+
+                <div class="app__bottom">
+
+                    <span class="app__bottom__item-left"><span id="itemLeft"></span> items left</span> <!-- Add dynamic number -->
+    
+                    <div id="filterList" class="app__bottom__sort">
+    
+                        <span id="filterAll" class="app__bottom__sort__item select">All</span> 
+                        <span id="filterUncompleted" class="app__bottom__sort__item">Active </span>
+                        <span id="filterCompleted" class="app__bottom__sort__item">Completed</span>
+                        
+                    </div>
+    
+                    <span id="clear-completed" class="app__bottom__clear">Clear Completed</span> 
+    
+                </div>
+
+            </div>
+
+            <p class="dragndrop" >Drag and drop to reorder list</p> 
+            <!-- END APP TODO LIST-->
+
+            <div class="attribution">
+                Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
+                Coded by <a href="https://www.frontendmentor.io/profile/ByKyZo">Alex</a>.
+            </div>
+
+        </div>
+
+    </div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
