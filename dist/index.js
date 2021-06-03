@@ -49,13 +49,13 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
 // const ORIGIN = 'http://localhost:5000';
-// const io = new Server(server, {
-//     cors: {
-//         origin: ORIGIN,
-//         credentials: true,
-//     },
-// });
-const io = new socket_io_1.Server(server);
+const io = new socket_io_1.Server(server, {
+    cors: {
+        origin: ORIGIN,
+        credentials: true,
+    },
+});
+// const io = new Server(server);
 const routes = [];
 // FAIRE UNE CLASSE SOCKET PROPREMENT
 io.on('connection', (socket) => {
@@ -166,7 +166,6 @@ routes.push(new user_routes_1.default(app));
 routes.push(new board_routes_1.default(app));
 if (ON_PRODUCTION) {
     app.use(express_1.default.static(path_1.default.join(__dirname, '..', 'client', 'build')));
-    app.use('*', express_1.default.static(path_1.default.join(__dirname, '..', 'client', 'build'))); // Added this
     app.get('*', (req, res) => {
         res.sendFile(path_1.default.join(__dirname, '..', 'client', 'build', 'index.html'));
     });

@@ -21,14 +21,14 @@ const PORT = process.env.PORT || 5000;
 const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
 // const ORIGIN = 'http://localhost:5000';
 
-// const io = new Server(server, {
-//     cors: {
-//         origin: ORIGIN,
-//         credentials: true,
-//     },
-// });
+const io = new Server(server, {
+    cors: {
+        origin: ORIGIN,
+        credentials: true,
+    },
+});
 
-const io = new Server(server);
+// const io = new Server(server);
 
 const routes: Array<CommonRoutesConfig> = [];
 
@@ -165,7 +165,6 @@ routes.push(new BoardRoutes(app));
 
 if (ON_PRODUCTION) {
     app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
-    app.use('*', express.static(path.join(__dirname, '..', 'client', 'build'))); // Added this
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
     });
