@@ -34,7 +34,7 @@ const Board = (props) => {
     return (
         // METTRE LE NOM DU BOARD DYNAMIQUEMENT DANS LE TITRE
         <>
-            {board === 'BOARD_ERROR' || isEmpty(board) ? (
+            {board === 'BOARD_ERROR' ? (
                 <BoardError />
             ) : (
                 <PageTemplate
