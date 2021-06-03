@@ -13,7 +13,7 @@ import './database/database';
 import BoardController from './controllers/board.controller';
 import ListController from './controllers/list.controller';
 
-const ON_PRODUCTION = true;
+const ON_PRODUCTION = false;
 
 const app: express.Application = express();
 const server = http.createServer(app);
