@@ -15,6 +15,7 @@ import Attachments from './CardModal/Attachments';
 import Comments from './CardModal/Comments';
 import Loader from '../../utils/Loader';
 import Label from '../dropdown/Label';
+import PicturePicker from '../dropdown/PicturePicker';
 
 const CardModal = ({ isOpen, setIsOpen, _id, listID, listName }) => {
     const board = useSelector((state) => state.boardReducer.currentBoard);
@@ -22,6 +23,7 @@ const CardModal = ({ isOpen, setIsOpen, _id, listID, listName }) => {
     const [isOpenLabel, setIsOpenLabel] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isOpenAssignMember, setIsOpenAssignMember] = useState(false);
+    const [isOpenPicturePicker, setIsOpenPicturePicker] = useState(false);
 
     useEffect(() => {
         axios
@@ -58,6 +60,13 @@ const CardModal = ({ isOpen, setIsOpen, _id, listID, listName }) => {
                 });
             }
         });
+        socket.on('card change picture', ({ boardID, listID, cardID, picture }) => {
+            if (currentCardID === cardID) {
+                setCard((oldCard) => {
+                    return { ...oldCard, picture: picture };
+                });
+            }
+        });
         return () => {
             socket.off('change card description');
         };
@@ -85,7 +94,7 @@ const CardModal = ({ isOpen, setIsOpen, _id, listID, listName }) => {
                 ) : (
                     <>
                         <div className="cardmodal__head">
-                            <img className="cardmodal__head__img" src="" alt="card" />
+                            <img src={card.picture} alt="card" />
                         </div>
                         <div className="cardmodal__content">
                             <div className="cardmodal__content__left">
@@ -122,7 +131,7 @@ const CardModal = ({ isOpen, setIsOpen, _id, listID, listName }) => {
                             <div className="cardmodal__content__right">
                                 <CategoryTitle icon={<FaUserCircle />} title="Actions" />
 
-                                <div className="" style={{ position: 'relative' }}>
+                                <div style={{ position: 'relative' }}>
                                     <Button
                                         className="cardmodal__content__right__btn"
                                         onClick={() => setIsOpenLabel(true)}>
@@ -141,12 +150,24 @@ const CardModal = ({ isOpen, setIsOpen, _id, listID, listName }) => {
                                     />
                                 </div>
 
-                                <Button className="cardmodal__content__right__btn">
-                                    <MdImage className="cardmodal__content__right__btn__icon" />
-                                    <span className="cardmodal__content__right__btn__label">
-                                        Cover
-                                    </span>
-                                </Button>
+                                <div style={{ position: 'relative' }}>
+                                    <Button
+                                        className="cardmodal__content__right__btn"
+                                        onClick={() => setIsOpenPicturePicker(true)}>
+                                        <MdImage className="cardmodal__content__right__btn__icon" />
+                                        <span className="cardmodal__content__right__btn__label">
+                                            Cover
+                                        </span>
+                                    </Button>
+                                    <PicturePicker
+                                        boardID={board._id}
+                                        listID={listID}
+                                        cardID={_id}
+                                        isOpen={isOpenPicturePicker}
+                                        setIsOpen={setIsOpenPicturePicker}
+                                    />
+                                </div>
+
                                 <div className="cardmodal__content__right__members">
                                     <CategoryTitle icon={<MdGroup />} title="Members" />
                                     <ul className="cardmodal__content__right__members__list">

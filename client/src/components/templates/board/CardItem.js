@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BsPaperclip } from 'react-icons/bs';
 import { MdComment } from 'react-icons/md';
 import { MdAdd } from 'react-icons/md';
@@ -19,7 +19,7 @@ const CardItem = ({ _id, title, picture, labels, members, attachments, listID, l
                 onClick={(e) => {
                     dispatch(openModal(CARD_MODAL, { _id, listID, listName }));
                 }}>
-                {picture && <div className="card__image"></div>}
+                {picture && <img className="card__image" src={picture}></img>}
                 <span className="card__title">{title}</span>
                 <div className="card__category">
                     {labels.map((label) => {

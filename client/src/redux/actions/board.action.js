@@ -24,6 +24,7 @@ export const CHANGE_CARD_TITLE = 'CHANGE_CARD_TITLE';
 export const CHANGE_CARD_DESCRIPTION = 'CHANGE_CARD_DESCRIPTION';
 export const ADD_CARD_LABEL = 'ADD_CARD_LABEL';
 export const DELETE_CARD_LABEL = 'DELETE_CARD_LABEL';
+export const CHANGE_CARD_PICTURE = 'CHANGE_CARD_PICTURE';
 
 export const createBoard = (data) => {
     return (dispatch) => {
@@ -203,6 +204,15 @@ export const deleteCardLabel = (boardID, listID, cardID, labelID) => {
         return dispatch({
             type: DELETE_CARD_LABEL,
             payload: { boardID, listID, cardID, labelID },
+        });
+    };
+};
+
+export const changeCardPicture = (boardID, listID, cardID, picture) => {
+    return async (dispatch) => {
+        return dispatch({
+            type: CHANGE_CARD_PICTURE,
+            payload: { boardID, listID, cardID, picture },
         });
     };
 };

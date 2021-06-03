@@ -346,4 +346,28 @@ export default class ListController {
 
         return card.labels[card.labels.length - 1];
     }
+
+    public static async changeCardPicture(
+        boardID: string,
+        listID: string,
+        cardID: string,
+        picture: string
+    ) {
+        console.log(picture);
+
+        await boardModels.updateOne(
+            {
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            },
+            {
+                $set: {
+                    'lists.$.cards.$[inner]': { picture: picture },
+                },
+            },
+            {
+                arrayFilters: [{ 'inner._id': cardID }],
+            }
+        );
+    }
 }

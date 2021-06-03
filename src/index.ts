@@ -13,7 +13,19 @@ import './database/database';
 import BoardController from './controllers/board.controller';
 import ListController from './controllers/list.controller';
 
-const ON_PRODUCTION = true;
+// FOR PRODUCTION
+
+// SERVER SIDE
+// const ON_PRODUCTION = -> TRUE;
+
+// CLIENT SIDE
+// Change API / SOCKET URL in Config.js
+// And reBuild React App
+
+// HEROKU SIDE
+// SET ENV VARIABLE
+
+const ON_PRODUCTION: boolean = true;
 
 const app: express.Application = express();
 const server = http.createServer(app);
@@ -124,6 +136,10 @@ io.on('connection', (socket) => {
     socket.on('card delete label', async ({ boardID, listID, cardID, labelID }) => {
         ListController.deleteLabel(boardID, listID, cardID, labelID);
         io.emit('card delete label', { boardID, listID, cardID, labelID });
+    });
+    socket.on('card change picture', async ({ boardID, listID, cardID, picture }) => {
+        ListController.changeCardPicture(boardID, listID, cardID, picture);
+        io.emit('card change picture', { boardID, listID, cardID, picture });
     });
     socket.on('leave board', async ({ userID, boardID }) => {
         await BoardController.leaveBoard(userID, boardID);

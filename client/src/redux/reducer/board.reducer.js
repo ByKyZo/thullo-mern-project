@@ -20,6 +20,7 @@ import {
     CHANGE_CARD_DESCRIPTION,
     ADD_CARD_LABEL,
     DELETE_CARD_LABEL,
+    CHANGE_CARD_PICTURE,
 } from '../actions/board.action';
 
 const initialState = {
@@ -298,6 +299,25 @@ export default function boardReducer(state = initialState, action) {
                                     card.labels = card.labels.filter(
                                         (label) => label._id !== action.payload.labelID
                                     );
+                                }
+                            });
+                        }
+                        return list;
+                    }),
+                },
+            };
+        case CHANGE_CARD_PICTURE:
+            if (state.currentBoard._id !== action.payload.boardID) return { ...state };
+
+            return {
+                ...state,
+                currentBoard: {
+                    ...state.currentBoard,
+                    lists: state.currentBoard.lists.map((list) => {
+                        if (list._id === action.payload.listID) {
+                            list.cards.forEach((card) => {
+                                if (card._id === action.payload.cardID) {
+                                    card.picture = action.payload.picture;
                                 }
                             });
                         }

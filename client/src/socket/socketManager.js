@@ -7,6 +7,7 @@ import {
     assignMemberToCard,
     banMember,
     changeCardDescription,
+    changeCardPicture,
     changeCardTitle,
     changeDescription,
     changeState,
@@ -82,6 +83,9 @@ const SocketManager = (props) => {
         });
         socket.on('card delete label', ({ boardID, listID, cardID, labelID }) => {
             dispatchCallback(deleteCardLabel(boardID, listID, cardID, labelID));
+        });
+        socket.on('card change picture', ({ boardID, listID, cardID, picture }) => {
+            dispatchCallback(changeCardPicture(boardID, listID, cardID, picture));
         });
         socket.on('leave board', ({ userID, boardID }) => {
             console.log('leave board scktio');

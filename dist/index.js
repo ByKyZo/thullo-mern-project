@@ -44,6 +44,14 @@ const socket_io_1 = require("socket.io");
 require("./database/database");
 const board_controller_1 = __importDefault(require("./controllers/board.controller"));
 const list_controller_1 = __importDefault(require("./controllers/list.controller"));
+// FOR PRODUCTION
+// SERVER SIDE
+// const ON_PRODUCTION = -> TRUE;
+// CLIENT SIDE
+// Change API / SOCKET URL in Config.js
+// And reBuild React App
+// HEROKU SIDE
+// SET ENV VARIABLE
 const ON_PRODUCTION = true;
 const app = express_1.default();
 const server = http.createServer(app);
@@ -134,6 +142,10 @@ io.on('connection', (socket) => {
     socket.on('card delete label', ({ boardID, listID, cardID, labelID }) => __awaiter(void 0, void 0, void 0, function* () {
         list_controller_1.default.deleteLabel(boardID, listID, cardID, labelID);
         io.emit('card delete label', { boardID, listID, cardID, labelID });
+    }));
+    socket.on('card change picture', ({ boardID, listID, cardID, picture }) => __awaiter(void 0, void 0, void 0, function* () {
+        list_controller_1.default.changeCardPicture(boardID, listID, cardID, picture);
+        io.emit('card change picture', { boardID, listID, cardID, picture });
     }));
     socket.on('leave board', ({ userID, boardID }) => __awaiter(void 0, void 0, void 0, function* () {
         yield board_controller_1.default.leaveBoard(userID, boardID);

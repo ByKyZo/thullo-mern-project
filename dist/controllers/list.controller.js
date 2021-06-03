@@ -253,5 +253,20 @@ class ListController {
             return card.labels[card.labels.length - 1];
         });
     }
+    static changeCardPicture(boardID, listID, cardID, picture) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(picture);
+            yield board_models_1.default.updateOne({
+                _id: boardID,
+                lists: { $elemMatch: { _id: listID } },
+            }, {
+                $set: {
+                    'lists.$.cards.$[inner]': { picture: picture },
+                },
+            }, {
+                arrayFilters: [{ 'inner._id': cardID }],
+            });
+        });
+    }
 }
 exports.default = ListController;

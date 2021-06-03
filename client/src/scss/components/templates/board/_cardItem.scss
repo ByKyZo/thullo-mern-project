@@ -23,6 +23,8 @@
         height: 130px;
         margin-bottom: 16px;
         background-color: $primary;
+        width: 100%;
+        object-fit: cover;
     }
 
     &__title {
