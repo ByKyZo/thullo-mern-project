@@ -25,7 +25,7 @@ import ListController from './controllers/list.controller';
 // HEROKU SIDE
 // SET ENV VARIABLE
 
-const ON_PRODUCTION: boolean = false;
+const ON_PRODUCTION: boolean = true;
 
 const app: express.Application = express();
 const server = http.createServer(app);
