@@ -44,7 +44,7 @@ const socket_io_1 = require("socket.io");
 require("./database/database");
 const board_controller_1 = __importDefault(require("./controllers/board.controller"));
 const list_controller_1 = __importDefault(require("./controllers/list.controller"));
-const ON_PRODUCTION = false;
+const ON_PRODUCTION = true;
 const app = express_1.default();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
