@@ -36,6 +36,7 @@ const http = __importStar(require("http"));
 const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({ path: path_1.default.join(__dirname, '..', 'config', '.env.local') });
+const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const board_routes_1 = __importDefault(require("./routes/board.routes"));
@@ -151,14 +152,14 @@ io.on('connection', (socket) => {
  */
 app.use('/', cookie_parser_1.default());
 app.use(express_1.default.json());
-// app.use(cors({ origin: ORIGIN, credentials: true }));
+app.use(cors_1.default({ origin: ORIGIN, credentials: true }));
 app.use(express_1.default.urlencoded({ extended: true }));
 /**
  * Picture Path
  */
-app.use('/board-picture', express_1.default.static(path_1.default.join(__dirname, 'assets', 'images', 'board-picture')));
-app.use('/user-picture', express_1.default.static(path_1.default.join(__dirname, 'assets', 'images', 'user-picture')));
-app.use('/attachment', express_1.default.static(path_1.default.join(__dirname, 'assets', 'attachments')));
+app.use('/api/board-picture', express_1.default.static(path_1.default.join(__dirname, 'assets', 'images', 'board-picture')));
+app.use('/api/user-picture', express_1.default.static(path_1.default.join(__dirname, 'assets', 'images', 'user-picture')));
+app.use('/api/attachment', express_1.default.static(path_1.default.join(__dirname, 'assets', 'attachments')));
 /**
  * Routes
  */

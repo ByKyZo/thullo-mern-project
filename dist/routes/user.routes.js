@@ -8,13 +8,13 @@ class UserRoutes extends common_routes_config_1.CommonRoutesConfig {
         this.configureRoutes();
     }
     configureRoutes() {
-        this.app.route('/user/rememberme').get(user_controller_1.UserController.rememberMe);
-        this.app.route('/user/register').post(user_controller_1.UserController.register);
-        this.app.route('/user/login').post(user_controller_1.UserController.login);
-        this.app.route('/user/all/:id').get(user_controller_1.UserController.getUsersByNotMatchBoardID);
-        this.app.route('/user/delete-notification').post(user_controller_1.UserController.deleteNotification);
+        this.app.route('/api/user/rememberme').get(user_controller_1.UserController.rememberMe);
+        this.app.route('/api/user/register').post(user_controller_1.UserController.register);
+        this.app.route('/api/user/login').post(user_controller_1.UserController.login);
+        this.app.route('/api/user/all/:id').get(user_controller_1.UserController.getUsersByNotMatchBoardID);
+        this.app.route('/api/user/delete-notification').post(user_controller_1.UserController.deleteNotification);
         this.app
-            .route('/user/:id')
+            .route('/api/user/:id')
             .get(user_controller_1.UserController.getUser)
             .delete(user_controller_1.UserController.delete)
             .patch(user_controller_1.UserController.update);

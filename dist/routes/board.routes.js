@@ -14,17 +14,19 @@ class BoardRoutes extends common_routes_config_1.CommonRoutesConfig {
         this.configureRoutes();
     }
     configureRoutes() {
-        this.app.route('/board/create').post(upload.single('picture'), board_controller_1.default.create);
-        this.app.route('/board/getallboardbyuserid/:id').get(board_controller_1.default.getAllBoardsByUserID);
-        this.app.route('/board/card/:id').post(list_controller_1.default.getCard);
-        this.app.route('/board/members/:id').post(board_controller_1.default.getAvailableAssignedMembers);
+        this.app.route('/api/board/create').post(upload.single('picture'), board_controller_1.default.create);
         this.app
-            .route('/board/list/card/download-attachment')
+            .route('/api/board/getallboardbyuserid/:id')
+            .get(board_controller_1.default.getAllBoardsByUserID);
+        this.app.route('/api/board/card/:id').post(list_controller_1.default.getCard);
+        this.app.route('/api/board/members/:id').post(board_controller_1.default.getAvailableAssignedMembers);
+        this.app
+            .route('/api/board/list/card/download-attachment')
             .post(list_controller_1.default.downloadAttachment);
         this.app
-            .route('/board/list/card/attachment')
+            .route('/api/board/list/card/attachment')
             .post(upload.single('attachment'), list_controller_1.default.addAttachment);
-        this.app.route('/board/:id').get(board_controller_1.default.getBoard);
+        this.app.route('/api/board/:id').get(board_controller_1.default.getBoard);
         return this.app;
     }
 }

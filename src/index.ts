@@ -144,18 +144,21 @@ io.on('connection', (socket) => {
  */
 app.use('/', cookieParser());
 app.use(express.json());
-// app.use(cors({ origin: ORIGIN, credentials: true }));
+app.use(cors({ origin: ORIGIN, credentials: true }));
 app.use(express.urlencoded({ extended: true }));
 
 /**
  * Picture Path
  */
 app.use(
-    '/board-picture',
+    '/api/board-picture',
     express.static(path.join(__dirname, 'assets', 'images', 'board-picture'))
 );
-app.use('/user-picture', express.static(path.join(__dirname, 'assets', 'images', 'user-picture')));
-app.use('/attachment', express.static(path.join(__dirname, 'assets', 'attachments')));
+app.use(
+    '/api/user-picture',
+    express.static(path.join(__dirname, 'assets', 'images', 'user-picture'))
+);
+app.use('/api/attachment', express.static(path.join(__dirname, 'assets', 'attachments')));
 
 /**
  * Routes
