@@ -1,0 +1,10 @@
+.dndplaceholder {
+    @include radius('medium');
+    // position: absolute;
+    box-sizing: border-box;
+    border: 2px dashed $primary;
+    background-color: rgba($primary, 0.2);
+    display: block;
+    width: 269px;
+    height: 300px;
+}

@@ -11,8 +11,15 @@
         transition: 0.3s;
         &:focus {
             outline: none;
-            box-shadow: 0 0 0 2px rgb(241, 241, 241), 0 0 0 4px $color;
+            box-shadow: 0 0 0 2px rgb(255, 255, 255), 0 0 0 4px $color;
         }
+    }
+}
+
+@mixin hover($color) {
+    transform: 0.3s;
+    &:hover {
+        background-color: darken($color, 20%);
     }
 }
 
@@ -29,58 +36,76 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 8px;
     display: flex;
-    // justify-content: center;
     align-items: center;
     padding: 16px;
 }
 
-@mixin button($padding: 'basic', $rounded: 'basic', $type: 'primary') {
-    @include focus();
+@mixin buttonHover($color) {
+    @include focus($color);
+    &::before {
+        content: '';
+        height: 150%;
+        width: 150%;
+        background-color: darken($color, 10%);
+        // background-color: $color;
+        // opacity: 0.6;
+        position: absolute;
+        z-index: -1;
+        // transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s;
+        transition: ease 0.4s;
+        border-radius: 999999px;
+        transform: scaleY(0);
+    }
+    &:hover {
+        &::before {
+            // transform: translateX(0);
+            transform: scaleY(1);
+        }
+    }
+}
+
+@mixin button($padding: 'basic', $rounded: 'basic', $type: 'primary', $color: '', $text: white) {
     @include display(flex, unset, center, center);
     cursor: pointer;
     position: relative;
     transition: 0.3s;
     overflow: hidden;
     z-index: 10;
+    user-select: none !important;
 
     @if ($type == 'primary') {
         background-color: $primary;
-        color: $neutralLightest;
-        &::before {
-            content: '';
-            height: 100%;
-            width: 100%;
-            background-color: darken($primary, 20%);
-            opacity: 0.4;
-            position: absolute;
-            transform: translateX(-100%);
-            z-index: -1;
-            transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s;
-        }
-        &:hover {
-            &::before {
-                transform: translateX(0);
-            }
-        }
+        color: white;
+        @include buttonHover($primary) // @include focus($primary);
+;
     }
     @if ($type == 'secondary') {
         background-color: $neutralLight;
         color: $secondary;
+        @include buttonHover($neutralLight); // @include focus($primary);
+    }
+    @if ($type == 'disabled') {
+        @include focus(transparent);
+        background-color: $neutralMidDark;
+        color: $neutralLightest;
         &::before {
             content: '';
-            height: 100%;
-            width: 100%;
-            background-color: darken($neutralLight, 20%);
-            opacity: 0.4;
-            position: absolute;
-            transform: translateX(-100%);
-            z-index: -1;
-            transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s;
+            background-color: transparent;
         }
+    }
+    @if ($type == 'custom') {
+        background-color: $color;
+        color: $text;
+        @include buttonHover($color);
+    }
+
+    @if ($type == 'custom-outline') {
+        background-color: transparent;
+        border: 1px solid $color;
+        color: $color;
+        @include buttonHover($color);
         &:hover {
-            &::before {
-                transform: translateX(0);
-            }
+            color: $text;
         }
     }
 
@@ -116,12 +141,14 @@
     color: $color;
 }
 
-@mixin modalPreset() {
+@mixin componentPreset($hasBorderAndShadow: true) {
     background-color: white;
-    @include radius('small');
-    padding: 10px;
-    border: 1px solid $borderModal;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+    @if ($hasBorderAndShadow == true) {
+        @include radius('medium');
+        border: 1px solid $borderModal;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
 }
 // FAIRE UNE MARGIN / PADDING PREDEFINI;
 @mixin margin() {

@@ -1,0 +1,38 @@
+.emojipicker {
+    // background-color: rebeccapurple;
+    @include display(flex, column);
+    color: white;
+    min-height: 150px;
+    width: 200px;
+
+    &__category {
+        height: 40px;
+        background-color: $primary;
+    }
+
+    &__content {
+        // box-sizing: border-box;
+        // display: grid;
+        // grid-template-columns: repeat(6, 30px);
+        // justify-content: center;
+        // gap: 8px;
+        background-color: rgb(202, 202, 202);
+        display: flex;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+        height: 150px;
+        overflow-y: scroll;
+
+        &__item {
+            cursor: pointer;
+            background-color: transparent; // display: flex;
+            @include display(flex, unset, center, center);
+            // justify-content: center;
+            margin: 6px;
+            height: 30px;
+            width: 30px;
+
+            // background-color: red;
+        }
+    }
+}

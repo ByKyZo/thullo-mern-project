@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RiAddFill } from 'react-icons/ri';
 import Modal from '../../utils/Modal';
 import { MdImage, MdLock } from 'react-icons/md';
@@ -18,10 +18,22 @@ const ModalCreateBoard = ({ isOpen, setIsOpen }) => {
         owner: user._id,
     });
 
+    useEffect(() => {
+        if (!isOpen) {
+            setPicturePreview('');
+            setNewBoard({
+                name: '',
+                picture: '',
+                isPrivate: false,
+                owner: '',
+            });
+        }
+    }, [isOpen]);
+
     const handleChangePicture = async (e) => {
         if (!e.target.files[0]) return;
         const pictureFile = await e.target.files[0];
-        console.log(pictureFile);
+        // console.log(pictureFile);
         setNewBoard({ ...newBoard, picture: pictureFile });
         const picturePreviewURL = await URL.createObjectURL(pictureFile);
         setPicturePreview(picturePreviewURL);
@@ -33,13 +45,20 @@ const ModalCreateBoard = ({ isOpen, setIsOpen }) => {
         data.append('picture', newBoard.picture);
         data.append('isPrivate', newBoard.isPrivate);
         data.append('owner', user._id);
-
+        setIsOpen(false);
         dispatch(createBoard(data));
     };
 
     return (
         <>
-            <Modal hasCloseButton={true} isOpen={isOpen} setIsOpen={setIsOpen}>
+            <Modal
+                hasCloseButton={true}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                hasChoiceButton={true}
+                btnConfirmIcon={<RiAddFill />}
+                btnConfirmMessage="Create"
+                confirmFunction={() => handleCreateBoard()}>
                 <div className="createboardmodal">
                     <label
                         className={`createboardmodal__input__image ${
@@ -65,6 +84,7 @@ const ModalCreateBoard = ({ isOpen, setIsOpen }) => {
                     <input
                         value={newBoard.name}
                         onChange={(e) => setNewBoard({ ...newBoard, name: e.target.value })}
+                        maxLength="20"
                         className="createboardmodal__input__name"
                         type="text"
                         placeholder="Add board title"
@@ -86,19 +106,6 @@ const ModalCreateBoard = ({ isOpen, setIsOpen }) => {
                             }>
                             <MdLock className="createboardmodal__button__wrapper__item__icon" />{' '}
                             Private
-                        </Button>
-                    </div>
-                    <div className="createboardmodal__board">
-                        <Button
-                            className="createboardmodal__board__cancel"
-                            onClick={() => setIsOpen(false)}>
-                            Cancel
-                        </Button>
-                        <Button
-                            className="createboardmodal__board__create"
-                            onClick={() => handleCreateBoard()}>
-                            <RiAddFill className="createboardmodal__board__create__icon" />{' '}
-                            <span className="createboardmodal__board__create__label">Create</span>
                         </Button>
                     </div>
                 </div>

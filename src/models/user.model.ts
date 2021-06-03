@@ -1,44 +1,76 @@
 import mongoose, { Schema } from 'mongoose';
 import bycrypt from 'bcrypt';
-import { NextFunction } from 'express';
 
-const UserSchema: Schema = new Schema({
-    pseudo: {
-        type: String,
-        min: 4,
-        required: true,
-    },
-    email: {
-        type: String,
-        lowercase: true,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    boards: {
-        type: [String],
-    },
-    picture: {
-        type: String,
-        default: 'defaultUserPicture.png',
-    },
+export interface IUser extends mongoose.Document {
+    pseudo: string;
+    email: string;
+    password: string;
+    boards: [string];
+    picture: string;
     notifications: [
         {
-            title: {
-                type: String,
-                required: true,
-            },
-            message: {
-                type: String,
-            },
-            content: {
-                type: String,
-            },
+            type: string;
+            title: string;
+            message: string;
+            sender: string;
+            receiver: string;
+            boardIDRequested: String;
+        }
+    ];
+    createdAt: Date;
+    modifiedAt: Date;
+}
+
+const UserSchema: Schema = new Schema(
+    {
+        pseudo: {
+            type: String,
+            min: 4,
+            required: true,
         },
-    ],
-});
+        email: {
+            type: String,
+            lowercase: true,
+            required: true,
+        },
+        password: {
+            type: String,
+            required: true,
+        },
+        boards: {
+            type: [String],
+        },
+        picture: {
+            type: String,
+            default: 'defaultUserPicture.png',
+        },
+        notifications: [
+            {
+                type: {
+                    type: String,
+                    required: true,
+                },
+                title: {
+                    type: String,
+                    required: true,
+                },
+                message: {
+                    type: String,
+                },
+                sender: {
+                    type: String,
+                },
+                receiver: {
+                    type: String,
+                },
+                boardIDRequested: {
+                    type: String,
+                },
+            },
+        ],
+    },
+    { timestamps: true }
+);
 
 UserSchema.pre('save', function (this: any, next) {
     if (!this.picture) this.picture = 'defaultUserPicture.png';
@@ -51,4 +83,4 @@ UserSchema.pre('save', function (this: any, next) {
     });
 });
 
-export default mongoose.model('users', UserSchema);
+export default mongoose.model<IUser>('users', UserSchema);

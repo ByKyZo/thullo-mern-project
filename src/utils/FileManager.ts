@@ -2,10 +2,6 @@ import { promisify } from 'util';
 import { pipeline } from 'stream';
 import path from 'path';
 import fs from 'fs';
-import { Path } from 'typescript';
-import internal from 'node:stream';
-import multer from 'multer';
-import express from 'express';
 
 export default class FileManager {
     public static async uploadPicture(label: string, directory: string, file: any) {
@@ -34,6 +30,23 @@ export default class FileManager {
         await pipelinee(file.stream, fs.createWriteStream(uploadFilePath));
 
         return pictureName;
+    }
+
+    public static async uploadFile(label: string, file: any) {
+        // if (file.size > 500000) throw Error('MAX_SIZE : File must be max 0.5 Ko');
+
+        const pipelinee = promisify(pipeline);
+
+        const cleanLabel: string = label.replace(' ', '');
+
+        const fileName = `${cleanLabel}${Math.floor(Math.random() * 1000)}${Date.now()}-${
+            file.originalName
+        }`;
+
+        const uploadFilePath = path.join(__dirname, '..', 'assets', 'attachments', fileName);
+        await pipelinee(file.stream, fs.createWriteStream(uploadFilePath));
+
+        return fileName;
     }
 
     private deletePicture() {}

@@ -10,16 +10,14 @@ export default class UserRoutes extends CommonRoutesConfig {
     }
 
     configureRoutes() {
-        this.app.route('/user/rememberme').get(UserController.rememberMe);
-
-        this.app.route('/user/register').post(UserController.register);
-
-        this.app.route('/user/login').post(UserController.login);
-
-        this.app.route('/user/all/:id').get(UserController.getUsersByNotMatchBoardID);
+        this.app.route('/api/user/rememberme').get(UserController.rememberMe);
+        this.app.route('/api/user/register').post(UserController.register);
+        this.app.route('/api/user/login').post(UserController.login);
+        this.app.route('/api/user/all/:id').get(UserController.getUsersByNotMatchBoardID);
+        this.app.route('/api/user/delete-notification').post(UserController.deleteNotification);
 
         this.app
-            .route('/user/:id')
+            .route('/api/user/:id')
             .get(UserController.getUser)
             .delete(UserController.delete)
             .patch(UserController.update);

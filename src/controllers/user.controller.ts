@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { MongooseDocument } from 'mongoose';
+import { MongooseDocument, isValidObjectId } from 'mongoose';
 import UserModel from '../models/user.model';
 import bycrypt from 'bcrypt';
 import jwt, { Secret } from 'jsonwebtoken';
@@ -35,7 +35,7 @@ export class UserController {
 
     public static async login(req: Request, res: Response) {
         const { email, password } = req.body;
-
+        console.log('LOGIN');
         UserModel.findOne({ email }, async (err: any, docs: MongooseDocument) => {
             try {
                 if (err || !docs || !email || !password)
@@ -50,7 +50,7 @@ export class UserController {
                         if (!same || err) throw Error('INVALID_INFORMATION : Invalid informations');
 
                         const jwtToken = await UserController.createJwtToken(user._id);
-                        res.send({ user, remember_me: jwtToken });
+                        res.send({ user, token: jwtToken });
                     } catch (err) {
                         const errors = ErrorManager.checkErrors(['INVALID_INFORMATION'], err);
                         res.status(500).send(errors);
@@ -64,21 +64,21 @@ export class UserController {
     }
 
     public static rememberMe(req: Request, res: Response) {
-        if (!req.cookies.REMEMBER_ME) return res.status(500).send('NO_COOKIE');
+        if (!req.cookies.token) return res.status(500).send('NO_COOKIE');
 
-        const remember_me = req.cookies.REMEMBER_ME;
+        const token = req.cookies.token;
 
-        jwt.verify(remember_me, process.env.SECRET_TOKEN as Secret, async (err: any) => {
+        jwt.verify(token, process.env.SECRET_TOKEN as Secret, async (err: any) => {
             if (err) {
                 res.status(500).send({ message: 'INVALID_TOKEN' });
                 return console.log('Token verify error : ' + err);
             }
-            const tokenDecoded = await jwt.decode(remember_me, { complete: true });
+            const tokenDecoded = await jwt.decode(token, { complete: true });
             if (!tokenDecoded) return res.status(500).send('WRONG_TOKEN');
             const userID = tokenDecoded.payload.userID;
             const user = await UserModel.findById(userID).select('-password');
             const jwtToken = await UserController.createJwtToken(userID);
-            res.status(200).send({ user, remember_me: jwtToken });
+            res.status(200).send({ user, token: jwtToken });
         });
     }
 
@@ -91,15 +91,32 @@ export class UserController {
 
         const board = await Utils.toObject(await BoardModels.findById(boardID));
 
-        const users = await UserModel.find({ _id: { $nin: board.members } }).select(
-            'pseudo picture'
-        );
+        const userMembersOrWaiting = board.members.concat(board.usersWaiting);
+
+        const users = await UserModel.find({
+            _id: { $nin: userMembersOrWaiting },
+        }).select('pseudo picture');
 
         res.status(200).send(users);
     }
 
     public static async sendNotification(req: Request, res: Response) {
         const { userID, type, title, message } = req.body;
+    }
+
+    public static async deleteNotification(req: Request, res: Response) {
+        const { userID, notificationID, boardIDRequested } = req.body;
+
+        const user = await UserModel.findByIdAndUpdate(userID, {
+            $pull: { notifications: { _id: notificationID } },
+        });
+
+        if (isValidObjectId(boardIDRequested) && boardIDRequested) {
+            await BoardModels.findByIdAndUpdate(boardIDRequested, {
+                $pull: { usersWaiting: userID },
+            });
+        }
+        res.status(200).send(user);
     }
 
     public static delete(req: Request, res: Response) {

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import PageTemplate from '../components/templates/PageTemplate';
-import { Link } from 'react-router-dom';
 import Button from '../components/utils/Button';
 import { RiAddFill } from 'react-icons/ri';
 import { useSelector } from 'react-redux';
-import { getPicturePath } from '../utils/utils';
 import ModalCreateBoard from '../components/templates/modal/CreateBoard.jsx';
+import BoardItem from '../components/templates/board/BoardItem';
+import { isEmpty } from '../utils/utils';
 // REDIRIGER VERS LOGIN SI NON CONNECTE
 const Home = () => {
     const boards = useSelector((state) => state.boardReducer.boards);
@@ -28,38 +28,10 @@ const Home = () => {
                     </div>
 
                     <div className="allboards__container">
-                        {/* PLUS PARAMS ID PLUS TARD */}
-                        {/* FAIRE UN COMPOSANT POUR LES BOARDS ITEMS ? */}
-                        {boards.map(({ _id, name, picture, members, isPrivate, owner }) => {
-                            return (
-                                <Link
-                                    key={_id}
-                                    to={`/board/${_id}`}
-                                    className="allboards__container__items">
-                                    <img
-                                        className="allboards__container__items__img"
-                                        src={getPicturePath('board', picture)}
-                                        alt={`board ${name}`}
-                                    />
-                                    <span className="allboards__container__items__title">
-                                        {name}
-                                    </span>
-                                    <ul className="allboards__container__items__members">
-                                        {members.map(({ _id, pseudo, picture }) => {
-                                            return (
-                                                <li
-                                                    key={_id}
-                                                    className="allboards__container__items__members__profil">
-                                                    <img
-                                                        src={getPicturePath('user', picture)}
-                                                        alt={`${pseudo} profil`}></img>
-                                                </li>
-                                            );
-                                        })}
-                                    </ul>
-                                </Link>
-                            );
-                        })}
+                        {!isEmpty(boards) &&
+                            boards.map((board) => {
+                                return <BoardItem key={board._id} {...board} />;
+                            })}
                     </div>
                 </div>
             </PageTemplate>

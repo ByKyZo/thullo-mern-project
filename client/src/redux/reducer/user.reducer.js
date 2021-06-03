@@ -1,4 +1,4 @@
-import { LOGIN, REMEMBER_ME, ADD_NOTIFICATION } from '../actions/user.action';
+import { LOGIN, REMEMBER_ME, ADD_NOTIFICATION, DELETE_NOTIFICATION } from '../actions/user.action';
 
 const initialState = {};
 
@@ -9,14 +9,22 @@ export default function userReducer(state = initialState, action) {
         case REMEMBER_ME:
             return action.payload;
         case ADD_NOTIFICATION:
-            const invitations = action.payload;
-            const userIndex = invitations.findIndex((invit) => invit._id === state._id);
+            const notifications = action.payload;
+            const userIndex = notifications.findIndex((invit) => invit._id === state._id);
             return userIndex === -1
                 ? { ...state }
                 : {
                       ...state,
-                      notifications: [...state.notifications, invitations[userIndex].notifications],
+                      notifications: [
+                          ...state.notifications,
+                          notifications[userIndex].notifications,
+                      ],
                   };
+        case DELETE_NOTIFICATION:
+            return {
+                ...state,
+                notifications: state.notifications.filter((notif) => notif._id !== action.payload),
+            };
         default:
             return state;
     }

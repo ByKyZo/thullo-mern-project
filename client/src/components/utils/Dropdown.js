@@ -1,13 +1,21 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-import { CSSTransition } from 'react-transition-group';
+import { Transition } from 'react-transition-group';
+import { isEmpty } from '../../utils/utils';
+import PropTypes from 'prop-types';
 
 const DropDown = ({
     children,
+    contentRef,
+    contentClass,
+    allowsRef,
     isOpen,
     setIsOpen,
-    isReponsive = false,
+    isResponsive = false,
     maxWidthResponsive = 600,
+    isVertical = true,
+    title,
+    description,
     top,
     right,
     bottom,
@@ -17,28 +25,65 @@ const DropDown = ({
     bottomResponsive,
     leftResponsive,
 }) => {
-    const dropDownRef = useRef();
-
+    const dropdownContentRef = useRef();
+    const currentRef = isVertical ? dropdownContentRef : contentRef;
     const isBreakPoint = useMediaQuery({ query: `(max-width: ${maxWidthResponsive}px)` });
+    const [contentSize, setContentSize] = useState(null);
+    const heightOrWidth = isVertical ? 'maxHeight' : 'maxWidth';
+    const duration = 300;
+    const defaultStyle = {
+        transition: `${duration}ms ease`,
+        [heightOrWidth]: '0',
+        // padding: '8px',
+        overflow: 'hidden',
+    };
+    const transitionStyles = {
+        entering: {
+            [heightOrWidth]: `${contentSize}px`,
+            overflow: 'hidden',
+        },
+        entered: {
+            [heightOrWidth]: `${contentSize}px`,
+            overflow: 'visible',
+        },
+        exiting: { [heightOrWidth]: '0', overflow: 'hidden' },
+        exited: { [heightOrWidth]: '0', overflow: 'hidden' },
+    };
 
     useEffect(() => {
+        if (!isOpen) return;
+        if (currentRef.current) {
+            isVertical
+                ? setContentSize(currentRef.current.getBoundingClientRect().height)
+                : setContentSize(currentRef.current.getBoundingClientRect().width);
+        }
         const handleCloseDropDown = (e) => {
-            if (!dropDownRef.current) return () => setIsOpen(false);
-
-            !dropDownRef.current.contains(e.target) && setIsOpen(false);
+            if (isEmpty(allowsRef)) {
+                if (!currentRef.current) return setIsOpen(false);
+                !currentRef.current.contains(e.target) && setIsOpen(false);
+            } else {
+                if (!currentRef.current || !allowsRef.current) return setIsOpen(false);
+                if (
+                    !currentRef.current.contains(e.target) &&
+                    !allowsRef.current.contains(e.target)
+                ) {
+                    setIsOpen(false);
+                }
+            }
         };
         window.addEventListener('mousedown', handleCloseDropDown);
-        return () => {
+        if (!currentRef.current) return setIsOpen(false);
+        if (!isOpen) {
             window.removeEventListener('mousedown', handleCloseDropDown);
-        };
-    }, [setIsOpen]);
+        }
+    }, [isOpen, setIsOpen, currentRef, isVertical, allowsRef]);
 
     return (
         <>
             <div
-                className={`dropdown ${isReponsive && isBreakPoint ? 'dropdown-responsive' : ''}`}
+                className={`dropdown ${isResponsive && isBreakPoint ? 'dropdown-responsive' : ''}`}
                 style={
-                    isReponsive && isBreakPoint
+                    isResponsive && isBreakPoint
                         ? {
                               top: topResponsive,
                               right: rightResponsive,
@@ -47,18 +92,38 @@ const DropDown = ({
                           }
                         : { top, right, bottom, left }
                 }>
-                <CSSTransition
-                    unmountOnExit
-                    in={isOpen}
-                    appear={true}
-                    timeout={300}
-                    classNames="dropdown"
-                    onExited={() => setIsOpen(false)}>
-                    <div ref={dropDownRef}>{children}</div>
-                </CSSTransition>
+                <Transition unmountOnExit in={isOpen} timeout={duration}>
+                    {(state) => (
+                        <div
+                            className={`dropdown__content`}
+                            style={{
+                                ...defaultStyle,
+                                ...transitionStyles[state],
+                            }}>
+                            <div
+                                className={`${contentClass}`}
+                                ref={isVertical && dropdownContentRef}>
+                                {title && description && (
+                                    <>
+                                        <span className="dropdown__content__title">{title}</span>
+                                        <span className="dropdown__content__description">
+                                            {description}
+                                        </span>
+                                    </>
+                                )}
+                                {children}
+                            </div>
+                        </div>
+                    )}
+                </Transition>
             </div>
         </>
     );
+};
+
+DropDown.propTypes = {
+    isOpen: PropTypes.bool,
+    setIsOpen: PropTypes.func,
 };
 
 export default DropDown;

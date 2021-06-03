@@ -1,19 +1,6 @@
 .invitemember {
-    @include modalPreset();
     min-width: 245px;
-
-    &__title {
-        display: inline-block;
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-bottom: 12px;
-        color: $neutralDark;
-    }
-    &__para {
-        font-size: 0.8rem;
-        margin-bottom: 16px;
-        color: $secondary;
-    }
+    @include componentPreset();
 
     &__input__wrapper {
         @include radius('small');
@@ -57,11 +44,26 @@
         padding: 10px;
         list-style: none;
         margin-bottom: 24px;
+        max-height: 200px;
+        overflow-y: scroll;
+        &::-webkit-scrollbar {
+            transition: 0.3s;
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba($primary, 0.9);
+            border-radius: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background: $primary;
+        }
 
         &__item {
             @include radius('small');
 
-            @include display(flex, unset, start, center);
+            @include display(flex, unset, flex-start, center);
             background-color: transparent;
             padding: 8px;
             cursor: pointer;
@@ -101,7 +103,8 @@
         margin: 0 auto;
         font-size: 0.7rem;
         &--disabled {
-            background-color: $neutralMidDark;
+            @include button(0 24px, 'basic', 'disabled');
+            // background-color: $neutralMidDark;
         }
     }
 }

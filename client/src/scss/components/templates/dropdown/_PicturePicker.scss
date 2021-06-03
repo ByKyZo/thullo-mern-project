@@ -1,0 +1,45 @@
+.picturepicker {
+    @include componentPreset();
+    width: 245px;
+
+    &__input {
+        @include radius('small');
+        @include focus();
+        padding: 8px;
+        box-shadow: 0 2px 6px rgba($secondary, 0.2);
+        border: none;
+        margin-bottom: 18px;
+        width: 100%;
+        box-sizing: border-box;
+
+        &::placeholder {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-wrap: wrap;
+
+        &__picture {
+            @include radius('tiny');
+            background-color: transparent;
+            overflow: hidden;
+            display: flex;
+            margin: 6px;
+            cursor: pointer;
+            width: 49px;
+            height: 49px;
+            box-sizing: border-box;
+            object-fit: cover;
+            padding: 0;
+
+            > img {
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
+            }
+        }
+    }
+}

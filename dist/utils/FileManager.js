@@ -33,6 +33,17 @@ class FileManager {
             return pictureName;
         });
     }
+    static uploadFile(label, file) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // if (file.size > 500000) throw Error('MAX_SIZE : File must be max 0.5 Ko');
+            const pipelinee = util_1.promisify(stream_1.pipeline);
+            const cleanLabel = label.replace(' ', '');
+            const fileName = `${cleanLabel}${Math.floor(Math.random() * 1000)}${Date.now()}-${file.originalName}`;
+            const uploadFilePath = path_1.default.join(__dirname, '..', 'assets', 'attachments', fileName);
+            yield pipelinee(file.stream, fs_1.default.createWriteStream(uploadFilePath));
+            return fileName;
+        });
+    }
     deletePicture() { }
 }
 exports.default = FileManager;

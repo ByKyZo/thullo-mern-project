@@ -59,29 +59,6 @@
             }
         }
     }
-
-    &__board {
-        @include display(flex, unset, flex-end);
-
-        &__create {
-            @include button('basic', 'basic');
-            margin-left: 15px;
-            &__label {
-                font-size: 0.9rem;
-            }
-            &__icon {
-                margin-right: 6px;
-                font-size: 1.2rem;
-            }
-        }
-
-        &__cancel {
-            @include focus();
-            @include radius('small');
-            background-color: transparent;
-            color: $secondary;
-        }
-    }
 }
 
 .preview-active {

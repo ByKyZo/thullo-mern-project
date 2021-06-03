@@ -1,0 +1,220 @@
+.draggablelist {
+    width: 100%;
+}
+
+.list-dragged {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform-origin: top;
+    transform: rotateZ(5deg);
+}
+
+.list-wrapper {
+    display: flex;
+    max-height: 100%;
+    margin-right: 20px;
+    flex-shrink: 1;
+    list-style: none;
+}
+
+.list {
+    @include display(flex, column);
+    @include radius('medium');
+    background-color: $neutralMidlLight;
+    transition: 0.1s;
+    max-height: 100%;
+    padding: 12px;
+    width: 269px;
+
+    &__top {
+        @include display(flex, unset, space-between, stretch);
+        color: $neutralDark;
+        margin-bottom: 20px;
+        position: relative;
+        padding: 0 10px;
+
+        &__title {
+            font-weight: 500;
+            word-break: break-all;
+            max-height: 80px;
+            // overflow-y: auto;
+            // display: block;
+        }
+
+        &__btn-menu {
+            display: flex;
+            background-color: transparent;
+            align-self: flex-start;
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: rgba($secondary, 0.8);
+            &:hover {
+                color: $secondary;
+            }
+        }
+
+        &__rename {
+            width: 100%;
+            &__input {
+                @include focus();
+                @include radius('small');
+                padding: 6px;
+                border: none;
+                box-sizing: border-box;
+                margin-bottom: 12px;
+            }
+            &__btn-wrapper {
+                display: flex;
+
+                &__btn {
+                    background-color: transparent;
+                    font-size: 0.9rem;
+                    cursor: pointer;
+                }
+                &__check {
+                    @include button('basic', 'basic');
+                    margin-right: 8px;
+                }
+                &__cancel {
+                    color: $secondary;
+                }
+            }
+        }
+    }
+
+    &__content {
+        list-style: none;
+        overflow-y: auto;
+        padding: 0 10px;
+        min-height: 1px;
+        position: relative;
+        overflow-x: hidden;
+
+        &::-webkit-scrollbar {
+            border-radius: 6px;
+            transition: 0.3s;
+            width: 6px;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba($primary, 0.9);
+            border-radius: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background: $primary;
+        }
+
+        &__card {
+            @include radius('medium');
+            background-color: $neutralLightest;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+
+            &__image {
+                @include radius('medium');
+                height: 130px;
+                margin-bottom: 16px;
+                background-color: $primary;
+            }
+
+            &__title {
+                display: inline-block;
+                font-weight: 500;
+                margin-bottom: 20px;
+            }
+
+            &__category {
+                list-style: none;
+                display: flex;
+                margin-bottom: 20px;
+                &__item {
+                    font-size: 0.8rem;
+                    border-radius: 9999px;
+                    padding: 4px 10px;
+                    background-color: rgba(58, 32, 129, 0.3);
+                    color: rgb(58, 32, 129);
+                    margin-right: 12px;
+                }
+            }
+
+            &__bottom {
+                @include display(flex, unset, space-between, center);
+
+                &__members {
+                    list-style: none;
+                    display: flex;
+
+                    &__item {
+                        @include radius('small');
+                        height: 28px;
+                        width: 28px;
+                        background-color: $primaryLight;
+                        margin-right: 8px;
+                    }
+
+                    &__btn-addmember {
+                        @include button(8px, 'basic');
+                        height: 28px;
+                        width: 28px;
+                        &__icon {
+                            font-size: 1.3rem;
+                            flex-shrink: 0;
+                        }
+                    }
+                }
+
+                &__utils {
+                    display: flex;
+
+                    &__btn {
+                        background: transparent;
+                        color: rgba($neutralMidDark, 0.8);
+                        display: flex;
+                        align-items: center;
+                        cursor: pointer;
+                        &:hover {
+                            color: rgba($neutralMidDark, 1);
+                        }
+
+                        &__number {
+                            font-size: 0.8rem;
+                            margin-left: 4px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.listmenu {
+    @include componentPreset();
+    list-style: none;
+    font-size: 0.9rem;
+    width: 151px;
+
+    &__item {
+        &__btn {
+            @include radius('small');
+            padding: 0 6px;
+            color: $secondary;
+            cursor: pointer;
+            line-height: 25px;
+            background-color: transparent;
+            width: 100%;
+            text-align: start;
+            transition: 0.3s;
+            &:hover {
+                background-color: rgba($secondary, 0.2);
+            }
+        }
+    }
+
+    &__divider {
+        height: 1px;
+        background-color: rgba($secondary, 0.6);
+        margin: 12px 0;
+    }
+}

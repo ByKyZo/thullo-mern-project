@@ -44,13 +44,18 @@ const Register = (props) => {
             confirmPassword: '',
         },
         validationSchema: Yup.object({
-            pseudo: Yup.string().required('Required'),
+            pseudo: Yup.string()
+                .min(4, 'Pseudo should have 4 characters minimum')
+                .max(12, 'Pseudo should have 12 characters maximum')
+                .required('Required'),
 
             email: Yup.string()
                 .required('Email address is required')
                 .email('Invalid email address'),
 
-            password: Yup.string().required('Password is required'),
+            password: Yup.string()
+                .min(6, 'Password should have 6 characters minimum')
+                .required('Password is required'),
 
             confirmPassword: Yup.string()
                 .required('Please confirm your password')

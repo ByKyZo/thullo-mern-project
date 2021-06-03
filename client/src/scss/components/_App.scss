@@ -11,8 +11,25 @@
 @import './templates/Header';
 @import './templates/PageLoader';
 @import './templates/dropdown/InviteMember';
-@import './templates/modal/ProfilMenu';
+@import './templates/dropdown/ProfilMenu';
+@import './templates/dropdown/PrivateOrPublic';
+@import './templates/dropdown/BoardMenu';
+@import './templates/dropdown/EmojiPicker';
+@import './templates/dropdown/Label';
+@import './templates/dropdown/PicturePicker';
+@import './templates/board/List';
+@import './templates/board/cardLabel';
+@import './templates/board/cardItem';
+@import './templates/board/btnAddList';
+@import './templates/board/#board';
+@import './templates/board/placeholder';
+@import './templates/board/CommentBox';
 @import './templates/modal/CreateBoard';
+@import './templates/modal/CardModal';
+@import './templates/EditDescription';
+
+@import './layouts/categoryTiltle';
+@import './layouts/userDisplay';
 
 @import './utils/Loader';
 @import './utils/DropDown';

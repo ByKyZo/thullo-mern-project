@@ -48,6 +48,10 @@ const UserSchema = new mongoose_1.Schema({
     },
     notifications: [
         {
+            type: {
+                type: String,
+                required: true,
+            },
             title: {
                 type: String,
                 required: true,
@@ -55,12 +59,18 @@ const UserSchema = new mongoose_1.Schema({
             message: {
                 type: String,
             },
-            content: {
+            sender: {
+                type: String,
+            },
+            receiver: {
+                type: String,
+            },
+            boardIDRequested: {
                 type: String,
             },
         },
     ],
-});
+}, { timestamps: true });
 UserSchema.pre('save', function (next) {
     if (!this.picture)
         this.picture = 'defaultUserPicture.png';

@@ -1,15 +1,32 @@
 .board {
     padding: 25px;
-    padding-top: 40px;
     padding-bottom: 0;
     background-color: $neutralLightest;
+    position: relative;
+    overflow: hidden;
+    @media (max-width: 900px) {
+        padding: 10px;
+    }
+
+    &__not-member {
+        @include radius('small');
+        background-color: $primary;
+        color: $neutralLightest;
+        top: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 12px 0;
+        margin-bottom: 50px;
+    }
 
     &__top {
         @include display(flex, unset, space-between, center);
-        margin-bottom: 25px;
+        margin-bottom: 30px;
 
         &__left {
             display: flex;
+            position: relative;
 
             &__btn-state {
                 @include button('basic', 'basic', 'secondary');
@@ -24,15 +41,32 @@
                 list-style: none;
                 display: flex;
 
-                &__item {
-                    @include radius('small');
-                    height: 100%;
-                    width: 38px;
-                    margin: 0 8px;
-                    background-color: $neutralMidlLight;
+                &__list {
                     display: flex;
-                    overflow: hidden;
+                    @media (max-width: 1100px) {
+                        position: absolute;
+                        top: 42px;
+                        left: 0;
+                    }
+                    &__item {
+                        @include radius('small');
+                        height: 100%;
+                        width: 38px;
+                        height: 38px;
+                        margin: 0 8px;
+                        background-color: $neutralMidlLight;
+                        display: flex;
+                        overflow: hidden;
+                        @media (max-width: 1100px) {
+                            margin: 0;
+                            // border-radius: 50%;
+                            width: 20px;
+                            height: 20px;
+                            margin-right: 4px;
+                        }
+                    }
                 }
+
                 &__adduser-wrapper {
                     position: relative;
                 }
@@ -42,6 +76,7 @@
                     height: 38px;
                     font-size: 1.7rem;
                     margin-left: 8px;
+                    position: relative;
                 }
             }
         }
@@ -69,18 +104,24 @@
 
     &__content {
         @include radius('big');
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
         padding: 25px;
         padding-top: 35px;
         background-color: $neutralMidlLight;
         width: 100%;
         box-sizing: border-box;
-        height: calc(100vh - 176px);
+        height: calc(100vh - 178px);
         display: flex;
         overflow-x: scroll;
+        @media (max-width: 900px) {
+            height: calc(100vh - 168px);
+        }
 
         &::-webkit-scrollbar {
             transition: 0.3s;
             width: 6px;
+            height: 10px;
         }
 
         &::-webkit-scrollbar-thumb {
@@ -90,139 +131,6 @@
 
         &::-webkit-scrollbar-thumb:hover {
             background: $primary;
-        }
-
-        &__table {
-            width: 243px;
-            @include display(flex, column);
-            margin-right: 40px;
-            flex-shrink: 0;
-            list-style: none;
-
-            &__top {
-                @include display(flex, unset, space-between, center);
-                color: $neutralDark;
-                margin-bottom: 20px;
-
-                &__title {
-                    font-weight: 500;
-                }
-
-                &__btn-menu {
-                    display: flex;
-                    background-color: transparent;
-                    cursor: pointer;
-                    font-size: 1.3rem;
-                    color: rgba($secondary, 0.8);
-                    &:hover {
-                        color: $secondary;
-                    }
-                }
-            }
-
-            &__content {
-                list-style: none;
-
-                &__item {
-                    @include radius('medium');
-                    background-color: $neutralLightest;
-                    margin-bottom: 20px;
-                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-                    padding: 10px;
-
-                    &__image {
-                        @include radius('medium');
-                        height: 130px;
-                        margin-bottom: 16px;
-                        background-color: $primary;
-                    }
-
-                    &__title {
-                        display: inline-block;
-                        font-weight: 500;
-                        margin-bottom: 20px;
-                    }
-
-                    &__category {
-                        list-style: none;
-                        display: flex;
-                        margin-bottom: 20px;
-                        &__item {
-                            font-size: 0.8rem;
-                            border-radius: 9999px;
-                            padding: 4px 10px;
-                            background-color: rgba(58, 32, 129, 0.3);
-                            color: rgb(58, 32, 129);
-                            margin-right: 12px;
-                        }
-                    }
-
-                    &__bottom {
-                        @include display(flex, unset, space-between, center);
-
-                        &__members {
-                            list-style: none;
-                            display: flex;
-
-                            &__item {
-                                @include radius('small');
-                                height: 28px;
-                                width: 28px;
-                                background-color: $primaryLight;
-                                margin-right: 8px;
-                            }
-
-                            &__btn-addmember {
-                                @include button(8px, 'basic');
-                                height: 28px;
-                                width: 28px;
-                                &__icon {
-                                    font-size: 1.3rem;
-                                    flex-shrink: 0;
-                                }
-                            }
-                        }
-
-                        &__utils {
-                            display: flex;
-
-                            &__btn {
-                                background: transparent;
-                                color: rgba($neutralMidDark, 0.8);
-                                display: flex;
-                                align-items: center;
-                                cursor: pointer;
-                                &:hover {
-                                    color: rgba($neutralMidDark, 1);
-                                }
-
-                                &__number {
-                                    font-size: 0.8rem;
-                                    margin-left: 4px;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            &__btn-addlist {
-                @include radius('small');
-                @include display(flex, unset, space-between, center);
-                @include colorAjust($primary);
-                cursor: pointer;
-                width: 243px;
-                padding: 0 16px;
-                font-size: 0.9rem;
-                height: 32px;
-                flex-shrink: 0;
-                transition: 0.2s;
-                &:hover {
-                    background-color: rgba($primary, 0.3);
-                }
-                &__icon {
-                    font-size: 1.2rem;
-                }
-            }
         }
     }
 }
