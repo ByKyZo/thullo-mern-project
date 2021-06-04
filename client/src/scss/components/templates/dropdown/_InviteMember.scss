@@ -1,3 +1,12 @@
+.dropdown-invitemember {
+    @media (max-width: 930px) {
+        left: -120px;
+    }
+    @media (max-width: 730px) {
+        left: -230px;
+    }
+}
+
 .invitemember {
     min-width: 245px;
     @include componentPreset();

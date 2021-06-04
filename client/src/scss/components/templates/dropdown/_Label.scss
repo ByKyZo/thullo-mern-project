@@ -1,3 +1,12 @@
+.dropdown-label {
+    @media (max-width: 930px) {
+        left: -120px;
+    }
+    @media (max-width: 730px) {
+        left: -225px;
+    }
+}
+
 .label {
     @include componentPreset();
     width: 245px;

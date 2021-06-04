@@ -194,19 +194,21 @@ const CardModal = ({ isOpen, setIsOpen, _id, listID, listName }) => {
                                                 );
                                             })}
                                     </ul>
-                                    <Button
-                                        className="cardmodal__content__right__members__btn-add"
-                                        onClick={() => setIsOpenAssignMember(true)}>
-                                        <span>Assign a member</span>{' '}
-                                        <MdAdd className="cardmodal__content__right__members__btn-add__icon" />
-                                    </Button>
-                                    <AssignMember
-                                        cardMembers={card.members}
-                                        cardID={_id}
-                                        listID={listID}
-                                        isOpen={isOpenAssignMember}
-                                        setIsOpen={setIsOpenAssignMember}
-                                    />
+                                    <div style={{ position: 'relative' }}>
+                                        <Button
+                                            className="cardmodal__content__right__members__btn-add"
+                                            onClick={() => setIsOpenAssignMember(true)}>
+                                            <span>Assign a member</span>{' '}
+                                            <MdAdd className="cardmodal__content__right__members__btn-add__icon" />
+                                        </Button>
+                                        <AssignMember
+                                            cardMembers={card.members}
+                                            cardID={_id}
+                                            listID={listID}
+                                            isOpen={isOpenAssignMember}
+                                            setIsOpen={setIsOpenAssignMember}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>

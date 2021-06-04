@@ -38,6 +38,7 @@ const PicturePicker = ({ isOpen, setIsOpen, boardID, listID, cardID }) => {
 
     return (
         <DropDown
+            wrapperClass="dropdown-picturepicker"
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             title="Photo Search"

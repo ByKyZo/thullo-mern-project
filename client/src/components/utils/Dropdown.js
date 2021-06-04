@@ -8,6 +8,7 @@ const DropDown = ({
     children,
     contentRef,
     contentClass,
+    wrapperClass,
     allowsRef,
     isOpen,
     setIsOpen,
@@ -81,7 +82,9 @@ const DropDown = ({
     return (
         <>
             <div
-                className={`dropdown ${isResponsive && isBreakPoint ? 'dropdown-responsive' : ''}`}
+                className={`dropdown ${wrapperClass} ${
+                    isResponsive && isBreakPoint ? 'dropdown-responsive' : ''
+                }`}
                 style={
                     isResponsive && isBreakPoint
                         ? {

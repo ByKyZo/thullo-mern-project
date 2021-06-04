@@ -16,9 +16,9 @@ const AssignMember = ({ isOpen, setIsOpen, cardMembers, cardID, listID }) => {
     const [userSearch, setUserSearch] = useState([]);
     const [searchValue, setSearchValue] = useState('');
 
-    useEffect(() =>{
+    useEffect(() => {
         if (isEmpty(cardMembers)) return;
-        setMembers(cardMembers.map((member) => member._id))
+        setMembers(cardMembers.map((member) => member._id));
     }, [cardMembers]);
 
     useEffect(() => {
@@ -68,7 +68,7 @@ const AssignMember = ({ isOpen, setIsOpen, cardMembers, cardID, listID }) => {
     return (
         <DropDown
             contentClass="invitemember"
-            isResponsive={true}
+            wrapperClass="dropdown-invitemember"
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             title="Members"

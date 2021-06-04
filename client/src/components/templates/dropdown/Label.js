@@ -98,6 +98,7 @@ const Label = ({ labels, boardID, listID, cardID, isOpen, setIsOpen }) => {
 
     return (
         <DropDown
+            wrapperClass="dropdown-label"
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             top="46px"
