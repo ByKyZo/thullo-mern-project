@@ -129,7 +129,12 @@ const CardModal = ({ isOpen, setIsOpen, _id, listID, listName }) => {
                                 />
                             </div>
                             <div className="cardmodal__content__right">
-                                <CategoryTitle icon={<FaUserCircle />} title="Actions" />
+                                <CategoryTitle
+                                    icon={<FaUserCircle />}
+                                    title="Actions"
+                                    spanClass="cardmodal-menu-title"
+                                    wrapperClass="cardmodal-menu-title-wrapper"
+                                />
 
                                 <div style={{ position: 'relative' }}>
                                     <Button
@@ -169,7 +174,12 @@ const CardModal = ({ isOpen, setIsOpen, _id, listID, listName }) => {
                                 </div>
 
                                 <div className="cardmodal__content__right__members">
-                                    <CategoryTitle icon={<MdGroup />} title="Members" />
+                                    <CategoryTitle
+                                        icon={<MdGroup />}
+                                        title="Members"
+                                        spanClass="cardmodal-menu-title"
+                                        wrapperClass="cardmodal-menu-title-wrapper"
+                                    />
                                     <ul className="cardmodal__content__right__members__list">
                                         {!isEmpty(card) &&
                                             card.members.map((member) => {
@@ -178,6 +188,8 @@ const CardModal = ({ isOpen, setIsOpen, _id, listID, listName }) => {
                                                         key={member._id}
                                                         pseudo={member.pseudo}
                                                         picture={member.picture}
+                                                        pseudoClass="cardmodal-userdisplay-pseudo"
+                                                        imgClass="cardmodal-userdisplay-img"
                                                     />
                                                 );
                                             })}

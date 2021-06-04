@@ -30,7 +30,7 @@ const ON_PRODUCTION: boolean = true;
 const app: express.Application = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
-const ORIGIN = ON_PRODUCTION ? '' : process.env.ORIGIN;
+const ORIGIN = ON_PRODUCTION ? ('' as string) : (process.env.ORIGIN as string);
 
 const io = new Server(server, {
     cors: {

@@ -1,7 +1,9 @@
 .cardmodal {
     width: 660px;
     min-height: 400px;
-
+    @media (max-width: 730px) {
+        width: 100%;
+    }
     &__head {
         margin-bottom: 16px;
         @include radius('medium');
@@ -271,7 +273,7 @@
         }
         &__right {
             width: 22%;
-            @media (max-width: 540px) {
+            @media (max-width: 730px) {
                 @include display(flex, column, flex-start, flex-end);
                 width: auto;
             }
@@ -281,19 +283,19 @@
                 @include display(flex, unset, flex-start, center);
                 margin-bottom: 12px;
                 width: 100%;
-                @media (max-width: 540px) {
+                @media (max-width: 730px) {
                     width: auto;
                 }
 
                 &__icon {
                     margin-right: 12px;
-                    @media (max-width: 540px) {
+                    @media (max-width: 730px) {
                         margin-right: 0;
                     }
                 }
 
                 &__label {
-                    @media (max-width: 540px) {
+                    @media (max-width: 730px) {
                         display: none;
                     }
                 }
@@ -302,7 +304,10 @@
             &__members {
                 margin-top: 12px;
                 position: relative;
-
+                @media (max-width: 730px) {
+                    @include display(flex, column, flex-start, flex-end);
+                    width: auto;
+                }
                 &__list {
                     list-style: none;
 
@@ -326,9 +331,18 @@
                     text-decoration: none;
                     margin-bottom: 10px;
 
+                    @media (max-width: 730px) {
+                        > span {
+                            display: none;
+                        }
+                    }
+
                     &__icon {
                         margin-left: 6px;
                         font-size: 1rem;
+                        @media (max-width: 730px) {
+                            margin-left: 0;
+                        }
                     }
 
                     &:hover {
@@ -337,5 +351,20 @@
                 }
             }
         }
+    }
+}
+
+@media (max-width: 730px) {
+    .cardmodal-menu-title {
+        display: none !important;
+    }
+    .cardmodal-menu-title-wrapper {
+        margin-right: 0 !important;
+    }
+    .cardmodal-userdisplay-pseudo {
+        display: none !important;
+    }
+    .cardmodal-userdisplay-img {
+        margin-left: 0 !important;
     }
 }
